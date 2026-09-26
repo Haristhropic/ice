@@ -1,17 +1,25 @@
 import type { Metadata } from "next";
-import { Baloo_2, Nunito } from "next/font/google";
+import localFont from "next/font/local";
 import "./globals.css";
 
-const baloo = Baloo_2({
+// Self-hosted instead of next/font/google: the build-time Google Fonts fetch
+// times out behind proxies, so ./fonts is committed rather than downloaded.
+const baloo = localFont({
+  src: "./fonts/Baloo2-Variable.woff2",
+  weight: "400 800",
+  style: "normal",
   variable: "--font-display",
-  subsets: ["latin"],
   display: "swap",
+  fallback: ["system-ui", "sans-serif"],
 });
 
-const nunito = Nunito({
+const nunito = localFont({
+  src: "./fonts/Nunito-Variable.woff2",
+  weight: "200 1000",
+  style: "normal",
   variable: "--font-body",
-  subsets: ["latin"],
   display: "swap",
+  fallback: ["system-ui", "sans-serif"],
 });
 
 export const metadata: Metadata = {
