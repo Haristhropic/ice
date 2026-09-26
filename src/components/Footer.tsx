@@ -13,6 +13,7 @@ export default function Footer() {
           <a href="#game">Game</a>
           <a href="#katalog">Katalog</a>
           <a href="#untuk">Untuk kamu</a>
+          <a href="/admin">Admin</a>
         </nav>
         <p className="footer-note">
           © 2026 IceBreaker Hub. Dibuat untuk para pembawa acara.
