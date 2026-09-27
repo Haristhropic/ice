@@ -325,6 +325,33 @@ create policy rooms_select on public.game_rooms
   to authenticated
   using ((select auth.uid()) = host_id or private.is_admin());
 
+-- Participants join from their own phones with no account (PRD 3.1B and the
+-- "Quick Start, no auth needed" promise in PRD 3.2), so anon has to be able
+-- to resolve a room code. Without this the join flow is impossible: anon sees
+-- no rows at all, so no code can ever match.
+--
+-- Scoped to rooms that have not ended, which makes a finished room
+-- indistinguishable from a wrong code. That stops the 4-8 character code
+-- space (36^4 = 1.68M at the short end) from being enumerable once a
+-- session closes. Kept as its own policy rather than folded into
+-- rooms_select because Postgres ORs permissive policies together, so that
+-- would hand the anon read to every signed-in user as well.
+drop policy if exists rooms_select_anon_active on public.game_rooms;
+create policy rooms_select_anon_active on public.game_rooms
+  for select
+  to anon
+  using (status <> 'ended');
+
+-- A row-level policy exposes whole rows, so the policy above would also let
+-- anon select host_id, which is the host's auth.users uuid. Column
+-- privileges combine with RLS (both must pass), so narrowing the grant to
+-- the columns the public lookup renders closes that disclosure without
+-- touching the policy. id is excluded: room_code is already unique.
+-- authenticated keeps its own table-level grant and is unaffected.
+revoke select on public.game_rooms from anon;
+grant select (room_code, status, active_game_type, created_at)
+  on public.game_rooms to anon;
+
 drop policy if exists rooms_insert on public.game_rooms;
 create policy rooms_insert on public.game_rooms
   for insert

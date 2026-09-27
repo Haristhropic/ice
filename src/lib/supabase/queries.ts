@@ -238,6 +238,41 @@ export async function deleteRoom(id: string): Promise<Result<true>> {
 }
 
 
+/* ==================== public room lookup ==================== */
+
+/* The public projection of a game_rooms row. Deliberately narrower than
+   GameRoom: host_id is the host's auth.users uuid, and anon is not granted
+   SELECT on that column, so asking for it here would just 42501. */
+export interface PublicRoom {
+  room_code: string;
+  status: RoomStatus;
+  active_game_type: ActiveGameType | null;
+  created_at: string;
+}
+
+export const ROOM_CODE_PATTERN = /^[A-Z0-9]{4,8}$/;
+
+/* Resolves a room code for a participant who has no account. Returns null for
+   both "no such code" and "that room already ended" on purpose: the RLS hides
+   ended rooms from anon, so the two are genuinely indistinguishable, and
+   saying otherwise would leak which codes are real. */
+export async function findActiveRoomByCode(raw: string): Promise<Result<PublicRoom | null>> {
+  const code = raw.trim().toUpperCase();
+  if (!ROOM_CODE_PATTERN.test(code)) {
+    return fail(new Error("Kode room harus 4-8 karakter huruf kapital atau angka."));
+  }
+
+  const { data, error } = await getSupabase()
+    .from("game_rooms")
+    .select("room_code, status, active_game_type, created_at")
+    .eq("room_code", code)
+    .maybeSingle();
+
+  if (error) return fail(error);
+  return ok(data ? row<PublicRoom>(data) : null);
+}
+
+
 /* ==================== profiles ==================== */
 
 export async function listProfiles(): Promise<Result<Profile[]>> {

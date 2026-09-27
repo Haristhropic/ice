@@ -1,3 +1,4 @@
+import Link from "next/link";
 import Nav from "@/components/Nav";
 import Hero from "@/components/Hero";
 import Marquee from "@/components/Marquee";
@@ -54,8 +55,13 @@ export default function Page() {
             </Reveal>
             <Reveal delay={0.06}>
               <p className="section-sub">
-                Dua contoh pertandingan kilat. Bagian kuis versi ruangan (Pin Room)
-                menyusul di fase berikutnya.
+                Dua contoh pertandingan kilat. Kalau host punya kode room,
+                peserta bisa cek statusnya tanpa bikin akun.
+              </p>
+              <p className="section-sub">
+                <Link className="room-link" href="/room">
+                  Buka halaman gabung room
+                </Link>
               </p>
             </Reveal>
           </div>
