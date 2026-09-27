@@ -15,15 +15,20 @@ const CATS: { id: Category; label: string }[] = [
 export default function QuestionTool() {
   const [cat, setCat] = useState<Category>("formal");
   const [q, setQ] = useState(QUESTIONS.formal[0]);
-  const last = useRef("");
+  const last = useRef<Record<Category, string>>({
+    formal: QUESTIONS.formal[0],
+    fun: "",
+    deep: "",
+    kids: "",
+  });
 
   function pick(c: Category) {
     const pool = QUESTIONS[c];
     let next = pool[randIdx(pool.length)];
-    if (next === last.current && pool.length > 1) {
+    if (next === last.current[c] && pool.length > 1) {
       next = pool[(pool.indexOf(next) + 1) % pool.length];
     }
-    last.current = next;
+    last.current = { ...last.current, [c]: next };
     setQ(next);
     sfx.ding();
   }
@@ -42,6 +47,7 @@ export default function QuestionTool() {
             key={c.id}
             className={`chip${cat === c.id ? " is-active" : ""}`}
             type="button"
+            aria-pressed={cat === c.id}
             onClick={() => {
               unlockAudio();
               setCat(c.id);

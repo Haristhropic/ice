@@ -46,6 +46,7 @@ export default function QuizTool() {
               key={i}
               className={`quiz-opt${showCorrect ? " is-correct" : ""}${wrong ? " is-wrong" : ""}${done ? " locked" : ""}`}
               type="button"
+              disabled={done}
               onClick={() => handlePick(i)}
             >
               {opt}
@@ -57,7 +58,7 @@ export default function QuizTool() {
         {done
           ? picked === SAMPLE_QUIZ.answerIndex
             ? "Benar! Pas untuk kenalan lebih dalam."
-            : "Bukan yang ini. Coba tebak lagi besok."
+            : "Belum tepat. Jawaban yang benar sudah ditandai hijau."
           : ""}
       </p>
       {done && (

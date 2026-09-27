@@ -77,6 +77,28 @@ export async function getCurrentProfile(): Promise<Result<Profile | null>> {
 
 /* ==================== icebreaker_ideas ==================== */
 
+/* Columns the public catalog actually renders. created_by and is_published are
+   deliberately omitted so an admin's uuid never reaches the public payload. */
+const PUBLIC_IDEA_COLUMNS =
+  "slug,title,description,category,media,duration,duration_minutes,age_group," +
+  "min_players,max_players,bahan,emoji,steps";
+
+/* The public catalog's read path. No session is required and none is created:
+   the `ideas_select` policy grants anon SELECT on published rows, so an
+   anonymous visitor gets exactly the published set. The explicit
+   is_published filter keeps the intent legible at the call site and means an
+   admin's own session cannot widen what the public page renders. */
+export async function listPublishedIdeas(): Promise<Result<IcebreakerIdea[]>> {
+  const { data, error } = await getSupabase()
+    .from("icebreaker_ideas")
+    .select(PUBLIC_IDEA_COLUMNS)
+    .eq("is_published", true)
+    .order("created_at", { ascending: true });
+
+  if (error) return fail(error);
+  return ok(rows<IcebreakerIdea>(data));
+}
+
 export async function listIdeas(): Promise<Result<IcebreakerIdea[]>> {
   const { data, error } = await getSupabase()
     .from("icebreaker_ideas")

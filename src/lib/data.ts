@@ -61,8 +61,8 @@ export const DEFAULT_WHEEL_OPTIONS = [
 ];
 
 export type Media = "online" | "offline";
-export type Duration = "quick" | "medium";
-export type AgeGroup = "anak" | "dewasa" | "lintas";
+export type Duration = "quick" | "medium" | "long";
+export type AgeGroup = "anak" | "remaja" | "dewasa" | "lintas";
 export type EventCategory = "kelas" | "rapat" | "workshop" | "pesta";
 
 export interface IcebreakerIdea {

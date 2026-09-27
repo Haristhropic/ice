@@ -8,6 +8,13 @@ import { randFloat, randIdx } from "@/lib/rand";
 
 const SEG_COLORS = ["#D12F1E", "#FFC53D", "#1FB6A6", "#5B7FFF", "#FF8FB1", "#EC8A00", "#7D5BFF", "#4ECB71"];
 
+/* White text on the yellow/orange/mint segments measures 1.6-2.6:1, which is
+   unreadable when projected. Those get the dark ink instead (>= 7:1). */
+const LIGHT_SEGMENTS = new Set([1, 5, 7]);
+
+const SPIN_MS = 4000;
+const SETTLE_MS = 200;
+
 export default function WheelTool() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [options, setOptions] = useState(DEFAULT_WHEEL_OPTIONS.join(", "));
@@ -15,7 +22,13 @@ export default function WheelTool() {
   const [result, setResult] = useState("Tekan Putar, lihat siapa gilirannya.");
   const [spinning, setSpinning] = useState(false);
   const rotation = useRef(0);
-  const wrapRef = useRef<HTMLDivElement>(null);
+  const settleTimer = useRef<number | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (settleTimer.current) window.clearTimeout(settleTimer.current);
+    };
+  }, []);
 
   const parsedOptions = useCallback(
     () =>
@@ -65,7 +78,7 @@ export default function WheelTool() {
       ctx.translate(cx, cy);
       ctx.rotate(start + seg / 2);
       ctx.textAlign = "right";
-      ctx.fillStyle = "#fff";
+      ctx.fillStyle = LIGHT_SEGMENTS.has(i) ? "#3a2c22" : "#fff";
       ctx.font = `600 13px ${fontFam}`;
       ctx.shadowColor = "rgba(0,0,0,0.35)";
       ctx.shadowBlur = 3;
@@ -81,6 +94,10 @@ export default function WheelTool() {
   }, [parsedOptions]);
 
   function applyOptions() {
+    if (spinning) {
+      setResult("Tunggu roda berhenti dulu sebelum ganti daftar.");
+      return;
+    }
     const opts = parsedOptions();
     if (opts.length < 2) {
       setResult("Isi minimal 2 pilihan.");
@@ -89,7 +106,10 @@ export default function WheelTool() {
     setEditing(false);
     rotation.current = 0;
     const wheel = canvasRef.current;
-    if (wheel) wheel.style.transform = "rotate(0deg)";
+    if (wheel) {
+      wheel.style.transition = "none";
+      wheel.style.transform = "rotate(0deg)";
+    }
     setResult("Daftar baru siap. Tekan Putar!");
   }
 
@@ -110,20 +130,29 @@ export default function WheelTool() {
     const target = rotation.current + extra * 360 + randFloat(360);
     rotation.current = target;
 
-    wheel.style.transition = "transform 4s cubic-bezier(0.15,0.8,0.2,1)";
+    // Reduced motion collapses the CSS transition to ~0ms, so waiting the full
+    // duration would leave the user staring at a motionless wheel.
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    wheel.style.transition = reduced
+      ? "none"
+      : `transform ${SPIN_MS}ms cubic-bezier(0.15,0.8,0.2,1)`;
     wheel.style.transform = `rotate(${target}deg)`;
 
-    window.setTimeout(() => {
-      const normalized = ((target % 360) + 360) % 360;
-      const pointerAt = 360 - normalized;
-      const idx = Math.floor((pointerAt % 360) / segDeg) % opts.length;
-      const picked = opts[idx];
-      setResult(`🎉 ${picked}! Giliran kamu.`);
-      setSpinning(false);
-      wheel.style.transition = "none";
-      sfx.ding();
-      confettiBurst();
-    }, 4200);
+    settleTimer.current = window.setTimeout(
+      () => {
+        const normalized = ((target % 360) + 360) % 360;
+        const pointerAt = 360 - normalized;
+        const idx = Math.floor((pointerAt % 360) / segDeg) % opts.length;
+        const picked = opts[idx];
+        setResult(`🎉 ${picked}! Giliran kamu.`);
+        setSpinning(false);
+        wheel.style.transition = "none";
+        sfx.ding();
+        confettiBurst();
+      },
+      reduced ? 0 : SPIN_MS + SETTLE_MS,
+    );
   }
 
   return (
@@ -135,7 +164,7 @@ export default function WheelTool() {
         <p className="tool-tag">Pilih peserta atau tantangan secara acak</p>
       </div>
       <div className="wheel-stage">
-        <div className="wheel-wrap" ref={wrapRef}>
+        <div className="wheel-wrap">
           <canvas
             ref={canvasRef}
             className="wheel"

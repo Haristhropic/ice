@@ -20,6 +20,13 @@ function fmt(sec: number) {
 
 type SoundKind = "alarm" | "gong" | "drumroll" | "applause";
 
+const SOUND_LABELS: Record<SoundKind, string> = {
+  alarm: "Alarm",
+  gong: "Gong",
+  drumroll: "Drum roll",
+  applause: "Tepuk tangan",
+};
+
 export default function TimerTool() {
   const [total, setTotal] = useState(60);
   const [left, setLeft] = useState(60);
@@ -137,7 +144,7 @@ export default function TimerTool() {
       <div className="sound-board" role="group" aria-label="Sound board">
         {(["alarm", "gong", "drumroll", "applause"] as SoundKind[]).map((k) => (
           <button key={k} className="chip" type="button" onClick={() => soundDemo(k)}>
-            <SpeakerHigh size={15} /> {k}
+            <SpeakerHigh size={15} /> {SOUND_LABELS[k]}
           </button>
         ))}
       </div>

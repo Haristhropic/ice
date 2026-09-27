@@ -13,7 +13,11 @@ export default function RiddleTool() {
   function next() {
     unlockAudio();
     setShow(false);
-    setIdx(randIdx(RIDDLES.length));
+    if (RIDDLES.length > 1) {
+      let candidate = randIdx(RIDDLES.length);
+      while (candidate === idx) candidate = randIdx(RIDDLES.length);
+      setIdx(candidate);
+    }
   }
 
   return (
@@ -27,7 +31,9 @@ export default function RiddleTool() {
       <p className="riddle-emojis" aria-live="polite">
         {riddle.emojis}
       </p>
-      <p className={`riddle-answer${show ? "" : " hidden"}`}>{riddle.answer}</p>
+      <p className={`riddle-answer${show ? "" : " hidden"}`} id="rid-answer">
+        {riddle.answer}
+      </p>
       <div className="riddle-actions">
         <button
           className="btn btn-ghost btn-sm"
