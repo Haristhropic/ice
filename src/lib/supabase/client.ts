@@ -20,8 +20,15 @@ const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
 function requireEnv(value: string | undefined, name: string): string {
   if (!value) {
+    /* This surfaces to the operator through describeError's raw-message
+       fallback, so it has to be actionable wherever the bundle is running.
+       Telling a deployed visitor to edit .env.local and restart a dev server
+       is nonsense; telling a local dev to edit Vercel settings is worse.
+       NODE_ENV is inlined at build time, so this costs nothing at runtime. */
     throw new Error(
-      `Missing ${name}. Copy .env.example to .env.local and fill it in, then restart the dev server.`,
+      process.env.NODE_ENV === "production"
+        ? `${name} is not set. Add it to the project's environment variables (on Vercel: Project > Settings > Environment Variables, for Production and Preview), then redeploy.`
+        : `${name} is not set. Copy .env.example to .env.local, fill it in, then restart the dev server.`,
     );
   }
   return value;
