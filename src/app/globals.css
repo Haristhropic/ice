@@ -617,7 +617,7 @@ textarea {
   }
 
   .hero-card-foot {
-    font-size: 0.66rem;
+    font-size: 0.72rem;
   }
 
   .hero-blob {
@@ -1630,6 +1630,83 @@ textarea {
   .timer-card {
     grid-column: 1 / 3;
     grid-row: 3 / 4;
+  }
+}
+
+/* Single column is the floor for the bento. Without it the four tool cards stay
+   two-up on a phone, and their content boxes shrink to roughly 110px, which
+   pushes the generate button and the riddle buttons past the card edge. */
+@media (max-width: 640px) {
+  .tools-grid {
+    grid-template-columns: 1fr;
+    grid-template-rows: none;
+  }
+
+  .wheel-card,
+  .question-card,
+  .riddle-card,
+  .timer-card {
+    grid-column: 1 / -1;
+    grid-row: auto;
+  }
+}
+
+/* ---------- mobile ergonomics ----------
+   Tap targets and icon sizing rules that only need to hold on touch devices. */
+@media (max-width: 640px) {
+  /* An icon inside a flex button is otherwise a shrinkable/stretchable item and
+     grows to fill whatever space a narrow card leaves it. */
+  .btn svg,
+  .link-btn svg,
+  .icon-btn svg {
+    flex: 0 0 auto;
+  }
+
+  /* 44px is the smallest comfortable tap target; at desktop density these are
+     deliberately tighter, so this is scoped to touch widths. */
+  .chip,
+  .btn-sm,
+  .icon-btn,
+  .link-btn {
+    min-height: 44px;
+  }
+
+  .icon-btn {
+    width: 44px;
+    height: 44px;
+  }
+
+  /* Padding, not min-height, so the inline text link keeps its line box. */
+  .room-link {
+    padding: 8px 0;
+  }
+
+  .logo {
+    min-height: 44px;
+  }
+
+  /* Accent and outline small buttons are siblings of .btn-sm, not descendants,
+     so they need naming here to pick up the same tap target. */
+  .btn-sm-accent,
+  .btn-sm-outline,
+  .btn-sm-danger {
+    min-height: 44px;
+  }
+
+  /* Underlined inline toggle inside the login paragraph. Padding keeps the
+     paragraph's line height while widening the hit area. */
+  .login-switch button {
+    padding: 10px 4px;
+  }
+
+  .tool-card,
+  .game-card {
+    padding: 20px 18px;
+  }
+
+  .riddle-actions .btn,
+  .q-cats .chip {
+    flex: 1 1 auto;
   }
 }
 
