@@ -44,7 +44,6 @@ export interface IcebreakerIdea {
   min_players: number;
   max_players: number;
   bahan: string;
-  emoji: string;
   photo_seed: string;
   steps: string[];
   is_published: boolean;

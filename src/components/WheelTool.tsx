@@ -1,6 +1,6 @@
 "use client";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { PencilSimple, X } from "@phosphor-icons/react";
+import { PencilSimple, X, CircleNotch } from "@phosphor-icons/react";
 import { DEFAULT_WHEEL_OPTIONS } from "@/lib/data";
 import { sfx, unlockAudio } from "@/lib/sound";
 import { confettiBurst } from "@/lib/confetti";
@@ -145,7 +145,7 @@ export default function WheelTool() {
         const pointerAt = 360 - normalized;
         const idx = Math.floor((pointerAt % 360) / segDeg) % opts.length;
         const picked = opts[idx];
-        setResult(`🎉 ${picked}! Giliran kamu.`);
+        setResult(`${picked}. Giliran kamu.`);
         setSpinning(false);
         wheel.style.transition = "none";
         sfx.ding();
@@ -159,7 +159,7 @@ export default function WheelTool() {
     <article className="tool-card wheel-card">
       <div className="tool-head">
         <h3 className="tool-title">
-          <span aria-hidden="true">🎡</span> Roda Keberuntungan
+          <CircleNotch size={21} weight="bold" aria-hidden="true" /> Roda Keberuntungan
         </h3>
         <p className="tool-tag">Pilih peserta atau tantangan secara acak</p>
       </div>

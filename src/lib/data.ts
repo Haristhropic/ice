@@ -35,29 +35,53 @@ export const QUESTIONS: Record<Category, string[]> = {
 };
 
 export interface Riddle {
-  emojis: string;
+  clues: string[];
   answer: string;
 }
 
 export const RIDDLES: Riddle[] = [
-  { emojis: "🌧️ ☂️", answer: "Hujan-hujanan" },
-  { emojis: "☕ 🌅", answer: "Kopi buka mata pagi" },
-  { emojis: "🐱 🎹", answer: "Kucing main piano" },
-  { emojis: "📱 🔕 🍽️", answer: "Makan sambil matikan HP" },
-  { emojis: "🎈 🎂 🕯️", answer: "Ulang tahun kejutan" },
-  { emojis: "👨‍💻 🏝️", answer: "Remote work dari pantai" },
-  { emojis: "❄️ 🧊 🥶", answer: "Suasana yang lagi dicairkan" },
-  { emojis: "🤝 🎯", answer: "Kerja sama tim" },
+  {
+    clues: ["Turun dari langit", "Bikin kita basah-basahan", "Payung jadi teman"],
+    answer: "Hujan-hujanan",
+  },
+  {
+    clues: ["Panas dan pekat", "Diminum sebelum matahari terbit", "Biar otak ikut bangun"],
+    answer: "Kopi buka mata pagi",
+  },
+  {
+    clues: ["Empat kaki di atas pedal", "Bikin tetangga ingin pindah", "Tetap santai sambil fokus"],
+    answer: "Kucing main piano",
+  },
+  {
+    clues: ["Layar gelap di meja makan", "Cuma tiga puluh menit", "Rasanya jadi lebih enak"],
+    answer: "Makan sambil matikan HP",
+  },
+  {
+    clues: ["Balon di tangan", "Lilin yang belum ditiup", "Semua ikut berteriak"],
+    answer: "Ulang tahun kejutan",
+  },
+  {
+    clues: ["Buku laptop tertinggal", "Pasir menggantikan lantai kantor", "Panggilan daring dari bawah payung"],
+    answer: "Remote work dari pantai",
+  },
+  {
+    clues: ["Es batu di gelas", "Sudah pelan-pelan hangat", "Mulai dari obrolan ringan"],
+    answer: "Suasana yang sedang mencair",
+  },
+  {
+    clues: ["Bahu bersentuhan", "Satu target untuk semua orang", "Saling menutupi kekurangan"],
+    answer: "Kerja sama tim",
+  },
 ];
 
 /* Fase 1: wheel demo. Nanti tersimpan per-user di custom_templates. */
 export const DEFAULT_WHEEL_OPTIONS = [
-  "Dance battle 💃",
+  "Dance battle",
   "Tebak suara siapa",
   "30 detik karaoke",
   "Cerita kocak 1 menit",
   "Sebut 1 fakta random",
-  "Tiru gaya robot 🤖",
+  "Tiru gaya robot",
 ];
 
 export type Media = "online" | "offline";
@@ -77,7 +101,6 @@ export interface IcebreakerIdea {
   minPlayers: number;
   maxPlayers: number;
   bahan: string;
-  emoji: string;
   photoSeed: string;
   steps: string[];
 }
@@ -98,7 +121,6 @@ export const CATALOG: IcebreakerIdea[] = [
     minPlayers: 5,
     maxPlayers: 30,
     bahan: "Tidak ada. Cukup ruang untuk berdiri.",
-    emoji: "👂",
     photoSeed: "simon-says-party",
     steps: [
       "Semua berdiri menghadap fasilitator.",
@@ -120,7 +142,6 @@ export const CATALOG: IcebreakerIdea[] = [
     minPlayers: 4,
     maxPlayers: 20,
     bahan: "Tidak ada.",
-    emoji: "🤥",
     photoSeed: "two-truths-lie",
     steps: [
       "Setiap orang menulis dua kebenaran dan satu kebohongan tentang dirinya.",
@@ -141,7 +162,6 @@ export const CATALOG: IcebreakerIdea[] = [
     minPlayers: 8,
     maxPlayers: 15,
     bahan: "Tidak ada. Ruang cukup luas.",
-    emoji: "🪢",
     photoSeed: "human-knot-team",
     steps: [
       "Semua berdiri melingkar dan memejamkan mata.",
@@ -161,7 +181,6 @@ export const CATALOG: IcebreakerIdea[] = [
     minPlayers: 6,
     maxPlayers: 30,
     bahan: "Kertas berisi daftar kata.",
-    emoji: "🎭",
     photoSeed: "charades-party",
     steps: [
       "Bagi peserta jadi dua tim.",
@@ -181,7 +200,6 @@ export const CATALOG: IcebreakerIdea[] = [
     minPlayers: 4,
     maxPlayers: 50,
     bahan: "Fitur chat di Zoom atau Teams.",
-    emoji: "🗨️",
     photoSeed: "zoom-call-meeting",
     steps: [
       "Host membacakan tema, misal: 'energi kamu hari ini?'.",
@@ -201,7 +219,6 @@ export const CATALOG: IcebreakerIdea[] = [
     minPlayers: 4,
     maxPlayers: 30,
     bahan: "Kamera menyala.",
-    emoji: "🙌",
     photoSeed: "name-game-camp",
     steps: [
       "Orang pertama menyebut nama sambil membuat satu gerakan.",

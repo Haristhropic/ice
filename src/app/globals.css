@@ -31,6 +31,7 @@
   --transition-base: 0.28s cubic-bezier(0.16, 1, 0.3, 1);
   --transition-wobble: 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
   --max-w: 1200px;
+  --surface-sunken: #fbf0dd;
 }
 
 *,
@@ -284,7 +285,11 @@ textarea {
 }
 
 .logo-mark {
-  font-size: 1.3rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--accent);
+  line-height: 0;
 }
 
 .logo-word {
@@ -662,7 +667,7 @@ textarea {
   grid-row: 1 / 2;
 }
 
-.emoji-card {
+.riddle-card {
   grid-column: 3 / 4;
   grid-row: 2 / 3;
 }
@@ -804,12 +809,41 @@ textarea {
   color: var(--ink);
 }
 
-/* emoji riddle */
-.riddle-emojis {
-  font-size: 3rem;
+.riddle-clues {
+  list-style: none;
+  margin: 0 0 14px;
+  padding: 0;
+  display: grid;
+  gap: 8px;
+}
+
+.riddle-clues li {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 11px 13px;
+  border-radius: var(--radius-input);
+  background: var(--surface-sunken);
+  border: 1px solid var(--line-light);
+  font-size: 0.95rem;
+  line-height: 1.45;
+  text-align: left;
+}
+
+.riddle-clue-num {
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  margin-top: 1px;
+  border-radius: var(--radius-pill);
+  background: var(--accent);
+  color: #fff;
+  font-family: var(--font-display);
+  font-size: 0.72rem;
+  font-weight: 800;
   line-height: 1;
-  margin-bottom: 10px;
-  text-align: center;
 }
 
 .riddle-answer {
@@ -1175,8 +1209,8 @@ textarea {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 3.4rem;
-  line-height: 1;
+  color: var(--accent);
+  line-height: 0;
 }
 
 .catalog-note {
@@ -1275,10 +1309,17 @@ textarea {
   box-shadow: 0 12px 32px rgba(0, 0, 0, 0.08);
 }
 
-.persona-emoji {
-  font-size: 2.8rem;
-  display: block;
-  margin-bottom: 12px;
+.persona-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 62px;
+  height: 62px;
+  margin-bottom: 14px;
+  border-radius: var(--radius-input);
+  background: var(--soft-red);
+  color: var(--accent);
+  line-height: 0;
 }
 
 .persona h3 {
@@ -1362,9 +1403,11 @@ textarea {
   text-align: center;
 }
 
-.cta-emoji {
-  font-size: 3rem;
-  margin-bottom: 16px;
+.cta-icon {
+  display: inline-flex;
+  margin-bottom: 18px;
+  color: var(--sun);
+  line-height: 0;
 }
 
 .cta-block h2 {
@@ -1532,7 +1575,7 @@ textarea {
     grid-row: 2 / 3;
   }
 
-  .emoji-card {
+  .riddle-card {
     grid-column: 2 / 3;
     grid-row: 2 / 3;
   }
@@ -2017,11 +2060,6 @@ textarea {
   gap: 6px;
   justify-content: flex-end;
   white-space: nowrap;
-}
-
-.cell-emoji {
-  font-size: 1.15rem;
-  line-height: 1;
 }
 
 /* ---------- pills (semantic state only) ---------- */

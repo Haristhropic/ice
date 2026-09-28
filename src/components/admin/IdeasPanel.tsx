@@ -40,7 +40,6 @@ import {
 interface IdeaForm {
   slug: string;
   title: string;
-  emoji: string;
   category: IdeaCategory;
   media: Media;
   duration: Duration;
@@ -58,7 +57,6 @@ interface IdeaForm {
 const EMPTY_FORM: IdeaForm = {
   slug: "",
   title: "",
-  emoji: "",
   category: "kelas",
   media: "offline",
   duration: "quick",
@@ -84,7 +82,6 @@ function toForm(idea: IcebreakerIdea): IdeaForm {
   return {
     slug: idea.slug,
     title: idea.title,
-    emoji: idea.emoji,
     category: idea.category,
     media: idea.media,
     duration: idea.duration,
@@ -228,7 +225,6 @@ export function IdeasPanel({
       draft: {
         slug: form.slug.trim(),
         title: form.title.trim(),
-        emoji: form.emoji.trim(),
         category: form.category,
         media: form.media,
         duration: form.duration,
@@ -358,7 +354,6 @@ export function IdeasPanel({
           <table className="admin-table">
             <thead>
               <tr>
-                <th scope="col">Ikon</th>
                 <th scope="col">Judul</th>
                 <th scope="col">Kategori</th>
                 <th scope="col">Media</th>
@@ -374,7 +369,6 @@ export function IdeasPanel({
             <tbody>
               {items.map((idea) => (
                 <tr key={idea.id}>
-                  <td className="cell-emoji">{idea.emoji || "-"}</td>
                   <td>
                     <div className="cell-strong">{idea.title}</div>
                     <div className="cell-muted cell-mono">{idea.slug}</div>
@@ -471,18 +465,6 @@ export function IdeasPanel({
                 value={form.slug}
                 invalid={Boolean(fieldErrors.slug)}
                 onChange={(event) => set("slug", event.target.value)}
-              />
-            </Field>
-
-            <Field
-              label="Ikon"
-              htmlFor="idea-emoji"
-              help="Satu emoji saja, dipakai sebagai ikon kartu"
-            >
-              <TextInput
-                id="idea-emoji"
-                value={form.emoji}
-                onChange={(event) => set("emoji", event.target.value)}
               />
             </Field>
 

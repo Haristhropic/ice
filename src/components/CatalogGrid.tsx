@@ -1,6 +1,13 @@
 "use client";
 import { useEffect, useState } from "react";
 import {
+  ChalkboardTeacher,
+  UsersThree,
+  PresentationChart,
+  Confetti,
+  type Icon,
+} from "@phosphor-icons/react";
+import {
   CATALOG,
   type AgeGroup,
   type Duration,
@@ -49,6 +56,13 @@ function matchGame(
   );
 }
 
+const CATEGORY_ICON: Record<EventCategory, Icon> = {
+  kelas: ChalkboardTeacher,
+  rapat: UsersThree,
+  workshop: PresentationChart,
+  pesta: Confetti,
+};
+
 const DURATION_LABEL: Record<Duration, string> = {
   quick: "1-3 mnt",
   medium: "5-10 mnt",
@@ -56,12 +70,12 @@ const DURATION_LABEL: Record<Duration, string> = {
 };
 
 const CARD_THEMES = [
-  "linear-gradient(150deg, #ffd875, #ffc53d)",
-  "linear-gradient(150deg, #ffe3dc, #ff8fb1)",
-  "linear-gradient(150deg, #e6faf7, #1fb6a6)",
-  "linear-gradient(150deg, #dfe6ff, #5b7fff)",
-  "linear-gradient(150deg, #f2e8d4, #ec8a00)",
-  "linear-gradient(150deg, #efe8ff, #7d5bff)",
+  "linear-gradient(150deg, #fff1e8, #ffc9b8)",
+  "linear-gradient(150deg, #ffe9e0, #ffab93)",
+  "linear-gradient(150deg, #fff6e8, #ffd0a8)",
+  "linear-gradient(150deg, #fdeae4, #f79377)",
+  "linear-gradient(150deg, #fff2ec, #ffb59c)",
+  "linear-gradient(150deg, #fce7de, #e9704f)",
 ];
 
 function themeFor(id: string) {
@@ -117,7 +131,6 @@ function toIdea(input: unknown): IcebreakerIdea | null {
     minPlayers: typeof row.min_players === "number" ? row.min_players : 0,
     maxPlayers: typeof row.max_players === "number" ? row.max_players : 0,
     bahan: typeof row.bahan === "string" ? row.bahan : "",
-    emoji: typeof row.emoji === "string" ? row.emoji : "",
     photoSeed: typeof row.photo_seed === "string" ? row.photo_seed : slug,
     steps,
   };
@@ -206,35 +219,36 @@ export default function CatalogGrid() {
       {visible.length === 0 ? (
         <p className="game-empty">
           Belum ada game yang cocok dengan filter ini. Coba longgarkan dulu salah satu
-          pilihan. 😅
+          pilihan.
         </p>
       ) : (
         <div className="catalog-grid">
-          {visible.map((g) => (
-            <article key={g.id} className="catalog-card">
-              <div
-                className="card-photo"
-                style={{ background: themeFor(g.id) }}
-                role="img"
-                aria-label={`Ikon ${g.title}`}
-              >
-                <span aria-hidden="true">{g.emoji}</span>
-              </div>
-              <div className="card-body">
-                <h3 className="card-title">
-                  {g.title} <span aria-hidden="true">{g.emoji}</span>
-                </h3>
-                <p className="card-meta">
-                  {DURATION_LABEL[g.duration]} · {g.minPlayers}-
-                  {g.maxPlayers} pemain, {g.media === "online" ? "Online" : "Offline"}
-                </p>
-                <p className="card-desc">{g.description}</p>
-                <p className="card-need">
-                  <strong>Bahan:</strong> {g.bahan}
-                </p>
-              </div>
-            </article>
-          ))}
+          {visible.map((g) => {
+            const CategoryIcon = CATEGORY_ICON[g.category];
+            return (
+              <article key={g.id} className="catalog-card">
+                <div
+                  className="card-photo"
+                  style={{ background: themeFor(g.id) }}
+                  role="img"
+                  aria-label={`Ikon ${g.title}`}
+                >
+                  <CategoryIcon size={44} weight="light" aria-hidden="true" />
+                </div>
+                <div className="card-body">
+                  <h3 className="card-title">{g.title}</h3>
+                  <p className="card-meta">
+                    {DURATION_LABEL[g.duration]} · {g.minPlayers}-
+                    {g.maxPlayers} pemain, {g.media === "online" ? "Online" : "Offline"}
+                  </p>
+                  <p className="card-desc">{g.description}</p>
+                  <p className="card-need">
+                    <strong>Bahan:</strong> {g.bahan}
+                  </p>
+                </div>
+              </article>
+            );
+          })}
         </div>
       )}
     </>

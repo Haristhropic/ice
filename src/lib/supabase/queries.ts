@@ -81,7 +81,7 @@ export async function getCurrentProfile(): Promise<Result<Profile | null>> {
    deliberately omitted so an admin's uuid never reaches the public payload. */
 const PUBLIC_IDEA_COLUMNS =
   "slug,title,description,category,media,duration,duration_minutes,age_group," +
-  "min_players,max_players,bahan,emoji,steps";
+  "min_players,max_players,bahan,steps";
 
 /* The public catalog's read path. No session is required and none is created:
    the `ideas_select` policy grants anon SELECT on published rows, so an
@@ -332,7 +332,7 @@ export const TOOL_OPTIONS: ReadonlyArray<{ value: ToolType; label: string }> = [
   { value: "quiz", label: "Kuis" },
   { value: "question_generator", label: "Generator pertanyaan" },
   { value: "timer", label: "Timer" },
-  { value: "riddle", label: "Tebak emoji" },
+  { value: "riddle", label: "Tebak frasa" },
 ];
 
 export const ROOM_STATUS_OPTIONS: ReadonlyArray<{ value: RoomStatus; label: string }> = [

@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
-import { Play, Pause, ArrowClockwise, SpeakerHigh } from "@phosphor-icons/react";
+import { Play, Pause, ArrowClockwise, SpeakerHigh, Timer } from "@phosphor-icons/react";
 import { sfx, unlockAudio } from "@/lib/sound";
 import { confettiBurst } from "@/lib/confetti";
 
@@ -91,7 +91,7 @@ export default function TimerTool() {
     <article className="tool-card timer-card">
       <div className="tool-head">
         <h3 className="tool-title">
-          <span aria-hidden="true">⏱️</span> Timer + Suara
+          <Timer size={21} weight="bold" aria-hidden="true" /> Timer + Suara
         </h3>
         <p className="tool-tag">Waktu mundur dengan efek suara</p>
       </div>

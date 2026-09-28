@@ -1,3 +1,5 @@
+"use client";
+import { Confetti } from "@phosphor-icons/react";
 import Reveal from "./Reveal";
 
 export default function CtaBlock() {
@@ -5,8 +7,8 @@ export default function CtaBlock() {
     <section className="cta-block" id="mulai">
       <div className="cta-inner">
         <Reveal>
-          <p className="cta-emoji" aria-hidden="true">
-            🎉
+          <p className="cta-icon" aria-hidden="true">
+            <Confetti size={54} weight="light" />
           </p>
         </Reveal>
         <Reveal delay={0.06}>

@@ -1,6 +1,6 @@
 "use client";
 import { useRef, useState } from "react";
-import { DiceFive } from "@phosphor-icons/react";
+import { DiceFive, ChatCircleDots } from "@phosphor-icons/react";
 import { QUESTIONS, type Category } from "@/lib/data";
 import { sfx, unlockAudio } from "@/lib/sound";
 import { randIdx } from "@/lib/rand";
@@ -37,7 +37,7 @@ export default function QuestionTool() {
     <article className="tool-card question-card">
       <div className="tool-head">
         <h3 className="tool-title">
-          <span aria-hidden="true">💬</span> Generator Pertanyaan
+          <ChatCircleDots size={21} weight="bold" aria-hidden="true" /> Generator Pertanyaan
         </h3>
         <p className="tool-tag">Would you rather sampai pertanyaan seru</p>
       </div>

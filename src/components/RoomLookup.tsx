@@ -2,7 +2,7 @@
 
 import { useState, type FormEvent } from "react";
 import Link from "next/link";
-import { ArrowLeft, SignIn, Warning } from "@phosphor-icons/react";
+import { ArrowLeft, SignIn, Warning, DeviceMobile } from "@phosphor-icons/react";
 import {
   ROOM_CODE_PATTERN,
   ROOM_GAME_OPTIONS,
@@ -68,7 +68,7 @@ export default function RoomLookup() {
         <article className="tool-card room-card">
           <div className="tool-head">
             <h1 className="tool-title">
-              <span aria-hidden="true">📱</span> Gabung Room
+              <DeviceMobile size={21} weight="bold" aria-hidden="true" /> Gabung Room
             </h1>
             <p className="tool-tag">Masukkan kode yang tampil di layar host</p>
           </div>

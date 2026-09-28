@@ -1,3 +1,5 @@
+"use client";
+import { MonitorPlay } from "@phosphor-icons/react";
 import Reveal from "./Reveal";
 
 export default function PresenterStrip() {
@@ -5,7 +7,7 @@ export default function PresenterStrip() {
     <section className="presenter">
       <Reveal>
         <div className="presenter-bubble" aria-hidden="true">
-          🖥️
+          <MonitorPlay size={34} weight="light" />
         </div>
       </Reveal>
       <Reveal delay={0.06}>

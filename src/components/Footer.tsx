@@ -1,9 +1,13 @@
+import { LogoMark } from "./LogoMark";
+
 export default function Footer() {
   return (
     <footer className="footer">
       <div className="footer-inner">
         <a className="logo" href="#top" aria-label="IceBreaker Hub, ke atas">
-          <span className="logo-mark" aria-hidden="true">🧊</span>
+          <span className="logo-mark" aria-hidden="true">
+            <LogoMark size={26} />
+          </span>
           <span className="logo-word">
             IceBreaker<span>Hub</span>
           </span>

@@ -57,7 +57,6 @@ create table if not exists public.icebreaker_ideas (
   min_players       integer not null default 2 check (min_players > 0),
   max_players       integer not null default 2 check (max_players >= min_players),
   bahan             text not null default '',
-  emoji             text not null default '',
   photo_seed        text not null default '',
   steps             jsonb not null default '[]'::jsonb
                     check (jsonb_typeof(steps) = 'array'),

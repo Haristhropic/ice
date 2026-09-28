@@ -12,6 +12,7 @@ import { TemplatesPanel } from "./TemplatesPanel";
 import { RoomsPanel } from "./RoomsPanel";
 import { UsersPanel } from "./UsersPanel";
 import { Banner } from "./primitives";
+import { LogoMark } from "../LogoMark";
 
 type TabId = "catalog" | "templates" | "rooms" | "users";
 
@@ -136,7 +137,7 @@ export function AdminApp() {
         <div className="admin-topbar-inner">
           <Link className="admin-brand" href="/">
             <span className="admin-brand-mark" aria-hidden="true">
-              🧊
+              <LogoMark size={22} />
             </span>
             IceBreaker Hub
             <span style={{ color: "var(--sun)", fontWeight: 700 }}>/ Admin</span>

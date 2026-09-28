@@ -107,7 +107,6 @@ export type Database = {
           description: string
           duration: string
           duration_minutes: string
-          emoji: string
           id: string
           is_published: boolean
           max_players: number
@@ -128,7 +127,6 @@ export type Database = {
           description?: string
           duration?: string
           duration_minutes?: string
-          emoji?: string
           id?: string
           is_published?: boolean
           max_players?: number
@@ -149,7 +147,6 @@ export type Database = {
           description?: string
           duration?: string
           duration_minutes?: string
-          emoji?: string
           id?: string
           is_published?: boolean
           max_players?: number

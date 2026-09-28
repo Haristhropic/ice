@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import { ArrowClockwise } from "@phosphor-icons/react";
+import { ArrowClockwise, ListChecks } from "@phosphor-icons/react";
 import { SAMPLE_QUIZ } from "@/lib/data";
 import { sfx, unlockAudio } from "@/lib/sound";
 import { confettiBurst } from "@/lib/confetti";
@@ -31,7 +31,7 @@ export default function QuizTool() {
     <article className="tool-card quiz-card">
       <div className="tool-head">
         <h3 className="tool-title">
-          <span aria-hidden="true">📝</span> Kuis Kilat
+          <ListChecks size={21} weight="bold" aria-hidden="true" /> Kuis Kilat
         </h3>
         <p className="tool-tag">Contoh soal pilihan ganda untuk layar bersama</p>
       </div>

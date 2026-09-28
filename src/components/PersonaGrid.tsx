@@ -1,23 +1,25 @@
+"use client";
+import { ChalkboardTeacher, UsersThree, MicrophoneStage, Users } from "@phosphor-icons/react";
 import Reveal from "./Reveal";
 
 const personas = [
   {
-    emoji: "🧑‍🏫",
+    Icon: ChalkboardTeacher,
     title: "Pendidik",
     text: "Mulai kelas 5 menit pertama dengan senyum, bukan dengusan.",
   },
   {
-    emoji: "💼",
+    Icon: UsersThree,
     title: "Fasilitator HR",
     text: "Cairkan rapat bulanan dan townhall, profesional tapi tetap seru.",
   },
   {
-    emoji: "🎤",
+    Icon: MicrophoneStage,
     title: "Event Host",
     text: "Game panggung, undian mini, dan kuis kilat untuk audiens ramai.",
   },
   {
-    emoji: "🏠",
+    Icon: Users,
     title: "Keluarga & Teman",
     text: "Permainan santai dan pertanyaan deep talk buat kumpul rumah.",
   },
@@ -32,14 +34,14 @@ export default function PersonaGrid() {
         </Reveal>
       </div>
       <div className="persona-grid">
-        {personas.map((p, i) => (
-          <Reveal key={p.title} delay={i * 0.06}>
+        {personas.map(({ Icon, title, text }, i) => (
+          <Reveal key={title} delay={i * 0.06}>
             <article className="persona">
-              <span className="persona-emoji" aria-hidden="true">
-                {p.emoji}
+              <span className="persona-icon" aria-hidden="true">
+                <Icon size={40} weight="light" />
               </span>
-              <h3>{p.title}</h3>
-              <p>{p.text}</p>
+              <h3>{title}</h3>
+              <p>{text}</p>
             </article>
           </Reveal>
         ))}

@@ -10,7 +10,7 @@
 
 insert into public.icebreaker_ideas (
   slug, title, description, category, media, duration, duration_minutes,
-  age_group, min_players, max_players, bahan, emoji, photo_seed, steps
+  age_group, min_players, max_players, , steps
 )
 values
   (
@@ -145,7 +145,6 @@ on conflict (slug) do update
       min_players      = excluded.min_players,
       max_players      = excluded.max_players,
       bahan            = excluded.bahan,
-      emoji            = excluded.emoji,
       photo_seed       = excluded.photo_seed,
       steps            = excluded.steps,
       updated_at       = now();

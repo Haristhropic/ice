@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
-import { ArrowClockwise } from "@phosphor-icons/react";
+import { ArrowClockwise, CursorClick } from "@phosphor-icons/react";
 import { sfx, unlockAudio } from "@/lib/sound";
 import { confettiBurst } from "@/lib/confetti";
 
@@ -76,7 +76,7 @@ export default function ClickGame() {
     <article className="game-card click-card">
       <div className="tool-head">
         <h3 className="tool-title">
-          <span aria-hidden="true">👆</span> Cepat-Tepat Klik
+          <CursorClick size={21} weight="bold" aria-hidden="true" /> Cepat-Tepat Klik
         </h3>
         <p className="tool-tag">Berapa klik kamu dalam 10 detik?</p>
       </div>
@@ -85,7 +85,7 @@ export default function ClickGame() {
         type="button"
         onClick={handleClick}
       >
-        {state === "running" ? "KLIK! 🔥" : "Klik aku secepat mungkin!"}
+        {state === "running" ? "KLIK!" : "Klik aku secepat mungkin!"}
       </button>
       <div className="click-stats">
         <p className="click-count">

@@ -8,6 +8,7 @@ import {
   ArrowsInSimple,
 } from "@phosphor-icons/react";
 import { isMuted, setMuted, unlockAudio } from "@/lib/sound";
+import { LogoMark } from "./LogoMark";
 
 export default function Nav() {
   const [open, setOpen] = useState(false);
@@ -66,7 +67,9 @@ export default function Nav() {
     <header className="nav" role="banner">
       <div className="nav-inner">
         <a className="logo" href="#top" aria-label="IceBreaker Hub, ke atas">
-          <span className="logo-mark" aria-hidden="true">🧊</span>
+          <span className="logo-mark" aria-hidden="true">
+            <LogoMark size={26} />
+          </span>
           <span className="logo-word">
             IceBreaker<span>Hub</span>
           </span>
