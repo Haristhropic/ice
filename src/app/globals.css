@@ -16,18 +16,28 @@
   --ink-3: #7d6c5c;
   --accent: #d12f1e;
   --accent-deep: #b02616;
-  --sun: #ffc53d;
-  --sun-2: #ffd875;
-  --teal: #1fb6a6;
-  --teal-bg: #e6faf7;
+  /* Decorative surfaces use neutral tints plus coral, so coral is the only
+     saturated accent. State colours (correct, live, published) use the
+     dedicated --ok/--info pairs so meaning never depends on a surface tint. */
   --soft-red: #ffe3dc;
   --soft-red-2: #ff5a3d;
+  --tint: #f7e6c4;
+  --tint-deep: #e8cf9c;
+  --tint-ink: #6b5a3a;
+  --ok: #2f7d5d;
+  --ok-bg: #e4f0e8;
+  --ok-ink: #1d5340;
+  --info: #3f6591;
+  --info-bg: #e6edf5;
+  --info-ink: #2b4767;
   --line: #eaddc6;
   --line-light: #f2e8d4;
   --radius-card: 20px;
   --radius-pill: 999px;
   --radius-input: 14px;
   --radius-tool: 24px;
+  --radius-sm: 12px;
+  --radius-lg: 32px;
   --transition-base: 0.28s cubic-bezier(0.16, 1, 0.3, 1);
   --transition-wobble: 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
   --max-w: 1200px;
@@ -53,6 +63,35 @@ body {
   color: var(--ink);
   background: var(--paper);
   overflow-x: hidden;
+}
+
+/* Grain sits above the flat cream as a fixed, non-interactive layer so it
+   never scrolls independently of the content behind it. Opacity is kept low
+   enough that the cream still reads as the base colour. */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  opacity: 0.035;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23g)'/%3E%3C/svg%3E");
+}
+
+/* Display type is set tight because Baloo 2 is wide at large sizes; body copy
+   gets `pretty` so it avoids single-word last lines. */
+h1,
+h2,
+h3,
+.hero-title,
+.logo-word,
+.card-title {
+  text-wrap: balance;
+  letter-spacing: -0.015em;
+}
+
+p {
+  text-wrap: pretty;
 }
 
 img {
@@ -509,7 +548,7 @@ textarea {
   left: 0;
   top: 18px;
   transform: rotate(-7deg);
-  background: var(--sun-2);
+  background: var(--tint);
 }
 
 .hc-2 {
@@ -589,11 +628,12 @@ textarea {
 
 /* ---------- marquee ---------- */
 .marquee {
-  background: var(--sun);
+  background: var(--tint);
+  color: var(--tint-ink);
   padding: 12px 0;
   overflow: hidden;
-  border-top: 2px solid var(--sun-2);
-  border-bottom: 2px solid var(--sun-2);
+  border-top: 2px solid var(--tint-deep);
+  border-bottom: 2px solid var(--tint-deep);
 }
 
 .marquee-track {
@@ -698,6 +738,12 @@ textarea {
   align-items: center;
   gap: 8px;
   margin-bottom: 4px;
+}
+
+/* The icon is a fixed-size flex item; without this a long title on a narrow
+   card squeezes the svg to zero width instead of wrapping the text. */
+.tool-title svg {
+  flex: 0 0 auto;
 }
 
 .tool-tag {
@@ -822,7 +868,7 @@ textarea {
   align-items: flex-start;
   gap: 10px;
   padding: 11px 13px;
-  border-radius: var(--radius-input);
+  border-radius: var(--radius-sm);
   background: var(--surface-sunken);
   border: 1px solid var(--line-light);
   font-size: 0.95rem;
@@ -850,7 +896,8 @@ textarea {
   font-family: var(--font-display);
   font-weight: 700;
   font-size: 1.1rem;
-  background: var(--sun);
+  background: var(--accent);
+  color: var(--paper);
   padding: 10px 16px;
   border-radius: var(--radius-pill);
   display: inline-block;
@@ -1068,9 +1115,9 @@ textarea {
 }
 
 .quiz-opt.is-correct {
-  background: var(--teal-bg);
-  border-color: var(--teal);
-  color: #0d5c52;
+  background: var(--ok-bg);
+  border-color: var(--ok);
+  color: var(--ok-ink);
 }
 
 .quiz-opt.is-wrong {
@@ -1316,7 +1363,7 @@ textarea {
   width: 62px;
   height: 62px;
   margin-bottom: 14px;
-  border-radius: var(--radius-input);
+  border-radius: var(--radius-sm);
   background: var(--soft-red);
   color: var(--accent);
   line-height: 0;
@@ -1353,8 +1400,8 @@ textarea {
   max-width: var(--max-w);
   margin-left: auto;
   margin-right: auto;
-  background: var(--sun);
-  border-radius: var(--radius-tool);
+  background: var(--tint);
+  border-radius: var(--radius-lg);
   padding: 32px 36px;
   display: flex;
   align-items: center;
@@ -1406,7 +1453,7 @@ textarea {
 .cta-icon {
   display: inline-flex;
   margin-bottom: 18px;
-  color: var(--sun);
+  color: var(--soft-red-2);
   line-height: 0;
 }
 
@@ -1420,17 +1467,17 @@ textarea {
 }
 
 .cta-block .btn-primary {
-  background: var(--sun);
-  color: var(--ink);
+  background: var(--paper);
+  color: var(--accent-deep);
 }
 
 .cta-block .btn-primary:hover {
-  background: var(--sun-2);
-  box-shadow: 0 6px 24px rgba(255, 197, 61, 0.32);
+  background: var(--soft-red);
+  box-shadow: 0 6px 24px rgba(209, 47, 30, 0.28);
 }
 
 .cta-note {
-  color: var(--ink-3);
+  color: var(--paper-2);
   font-size: 0.82rem;
   margin-top: 14px;
   font-weight: 600;
@@ -1731,7 +1778,7 @@ textarea {
   font-size: 0.9rem;
   line-height: 1.5;
   padding: 14px 16px;
-  border-radius: var(--radius-input);
+  border-radius: var(--radius-sm);
   background: var(--line-light);
   color: var(--ink-2);
 }
@@ -1960,7 +2007,7 @@ textarea {
 .admin-stat {
   background: var(--paper);
   border: 1.5px solid var(--line);
-  border-radius: var(--radius-input);
+  border-radius: var(--radius-sm);
   padding: 14px 16px;
 }
 
@@ -2090,15 +2137,15 @@ textarea {
 }
 
 .pill-sun {
-  background: var(--sun-2);
-  color: var(--ink);
-  border-color: var(--sun);
+  background: var(--info-bg);
+  color: var(--info-ink);
+  border-color: var(--info);
 }
 
 .pill-teal {
-  background: var(--teal-bg);
-  color: #0d5c52;
-  border-color: var(--teal);
+  background: var(--ok-bg);
+  color: var(--ok-ink);
+  border-color: var(--ok);
 }
 
 /* ---------- forms ---------- */
@@ -2278,7 +2325,7 @@ textarea {
   display: flex;
   align-items: flex-start;
   gap: 10px;
-  border-radius: var(--radius-input);
+  border-radius: var(--radius-sm);
   padding: 12px 16px;
   font-size: 0.88rem;
   line-height: 1.5;
@@ -2293,15 +2340,15 @@ textarea {
 }
 
 .banner-ok {
-  background: var(--teal-bg);
-  border-color: var(--teal);
-  color: #0d5c52;
+  background: var(--ok-bg);
+  border-color: var(--ok);
+  color: var(--ok-ink);
 }
 
 .banner-info {
-  background: var(--sun-2);
-  border-color: var(--sun);
-  color: var(--ink);
+  background: var(--info-bg);
+  border-color: var(--info);
+  color: var(--info-ink);
 }
 
 .banner-icon {
@@ -2384,7 +2431,7 @@ textarea {
 
 .modal {
   background: var(--paper);
-  border-radius: var(--radius-tool);
+  border-radius: var(--radius-lg);
   border-top: 5px solid var(--accent);
   width: 100%;
   max-width: 720px;
@@ -2455,7 +2502,7 @@ textarea {
 .login-card {
   background: var(--paper);
   border: 1.5px solid var(--line);
-  border-radius: var(--radius-tool);
+  border-radius: var(--radius-lg);
   border-top: 5px solid var(--accent);
   width: 100%;
   max-width: 420px;
