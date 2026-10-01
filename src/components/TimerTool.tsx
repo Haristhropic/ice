@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
-import { Play, Pause, ArrowClockwise, SpeakerHigh, Timer } from "@phosphor-icons/react";
+import { Play, Pause, ArrowClockwise } from "@phosphor-icons/react";
 import { sfx, unlockAudio } from "@/lib/sound";
 import { confettiBurst } from "@/lib/confetti";
 
@@ -10,22 +10,21 @@ const PRESETS = [
   { sec: 120, label: "2 mnt" },
   { sec: 300, label: "5 mnt" },
 ];
-const CIRC = 326.7;
-
-function fmt(sec: number) {
-  const m = Math.floor(sec / 60);
-  const s = sec % 60;
-  return `${m}:${String(s).padStart(2, "0")}`;
-}
 
 type SoundKind = "alarm" | "gong" | "drumroll" | "applause";
 
 const SOUND_LABELS: Record<SoundKind, string> = {
   alarm: "Alarm",
   gong: "Gong",
-  drumroll: "Drum roll",
+  drumroll: "Gum roll",
   applause: "Tepuk tangan",
 };
+
+function fmt(sec: number) {
+  const m = Math.floor(sec / 60);
+  const s = sec % 60;
+  return `${m}:${String(s).padStart(2, "0")}`;
+}
 
 export default function TimerTool() {
   const [total, setTotal] = useState(60);
@@ -79,75 +78,91 @@ export default function TimerTool() {
     setLeft(total);
   }
 
-  function soundDemo(kind: SoundKind) {
-    unlockAudio();
-    sfx.click();
-    sfx[kind]();
-  }
-
-  const progress = total > 0 ? left / total : 0;
+  const pct = total > 0 ? (left / total) * 100 : 0;
 
   return (
-    <article className="tool-card timer-card">
-      <div className="tool-head">
-        <h3 className="tool-title">
-          <Timer size={21} weight="bold" aria-hidden="true" /> Timer + Suara
-        </h3>
-        <p className="tool-tag">Waktu mundur dengan efek suara</p>
-      </div>
-      <div className="timer-main">
-        <div className={`timer-ring-wrap${finished ? " flash" : ""}`}>
-          <svg className="timer-ring" viewBox="0 0 120 120" aria-hidden="true">
-            <circle className="ring-track" cx="60" cy="60" r="52" />
-            <circle
-              className="ring-fill"
-              cx="60"
-              cy="60"
-              r="52"
-              style={{ strokeDashoffset: CIRC * (1 - progress) }}
-            />
-          </svg>
-          <span className="timer-time" aria-live="polite">
+    <div className="tool">
+      {/* The one instrument a facilitator reads from across the room, so it is
+          recessed into the counter rather than printed on the paper. */}
+      <div className="window timer-readout">
+        <p className="window-value tnum" aria-live="polite">
+          <span className={finished ? "is-done" : running ? "is-running" : ""}>
             {fmt(left)}
           </span>
+        </p>
+        <div
+          className="gauge"
+          role="progressbar"
+          aria-valuemin={0}
+          aria-valuemax={total}
+          aria-valuenow={left}
+          aria-label="Sisa waktu"
+        >
+          <span
+            className={`gauge-fill${finished ? " is-done" : ""}`}
+            style={{ width: `${pct}%` }}
+          />
+        </div>
+        <p className="window-label">
+          {finished ? "Waktu habis" : running ? "Berjalan" : "Siap"}
+        </p>
+      </div>
+
+      <div className="timer-set">
+        <p className="print-caption">Set durasi</p>
+        <div className="q-cats" role="group" aria-label="Durasi timer">
+          {PRESETS.map((p) => (
+            <button
+              key={p.sec}
+              className={`fchip${total === p.sec ? " is-on" : ""}`}
+              type="button"
+              aria-pressed={total === p.sec}
+              onClick={() => {
+                stop();
+                setRunning(false);
+                setFinished(false);
+                setTotal(p.sec);
+                setLeft(p.sec);
+                unlockAudio();
+                sfx.click();
+              }}
+            >
+              {p.label}
+            </button>
+          ))}
         </div>
       </div>
-      <div className="timer-presets" role="group" aria-label="Durasi timer">
-        {PRESETS.map((p) => (
-          <button
-            key={p.sec}
-            className={`chip${total === p.sec ? " is-active" : ""}`}
-            type="button"
-            onClick={() => {
-              stop();
-              setRunning(false);
-              setFinished(false);
-              setTotal(p.sec);
-              setLeft(p.sec);
-              unlockAudio();
-              sfx.click();
-            }}
-          >
-            {p.label}
-          </button>
-        ))}
-      </div>
-      <div className="timer-actions">
-        <button className="btn btn-primary btn-sm" type="button" onClick={start}>
-          {running ? <Pause size={17} weight="bold" /> : <Play size={17} weight="fill" />}
+
+      <div className="keyrow">
+        <button className="pkey pkey-stamp" type="button" onClick={start}>
+          {running ? (
+            <Pause size={15} weight="fill" />
+          ) : (
+            <Play size={15} weight="fill" />
+          )}
           {running ? "Jeda" : "Mulai"}
         </button>
-        <button className="btn btn-ghost btn-sm" type="button" onClick={reset}>
-          <ArrowClockwise size={16} /> Ulang
+        <button className="pkey pkey-quiet" type="button" onClick={reset}>
+          <ArrowClockwise size={15} weight="bold" /> Ulang
         </button>
       </div>
-      <div className="sound-board" role="group" aria-label="Sound board">
+
+      <div className="sound-board" role="group" aria-label="Papan suara">
         {(["alarm", "gong", "drumroll", "applause"] as SoundKind[]).map((k) => (
-          <button key={k} className="chip" type="button" onClick={() => soundDemo(k)}>
-            <SpeakerHigh size={15} /> {SOUND_LABELS[k]}
+          <button
+            key={k}
+            className="fchip"
+            type="button"
+            onClick={() => {
+              unlockAudio();
+              sfx.click();
+              sfx[k]();
+            }}
+          >
+            {SOUND_LABELS[k]}
           </button>
         ))}
       </div>
-    </article>
+    </div>
   );
 }

@@ -32,12 +32,12 @@ export function ConfirmDialog({
       size="sm"
       footer={
         <>
-          <button type="button" className="btn btn-sm-outline" onClick={onClose} disabled={busy}>
+          <button type="button" className="pkey pkey-quiet pkey-sm" onClick={onClose} disabled={busy}>
             Batal
           </button>
           <button
             type="button"
-            className="btn btn-sm-danger"
+            className="pkey pkey-danger pkey-sm"
             onClick={onConfirm}
             disabled={busy}
           >
@@ -47,7 +47,7 @@ export function ConfirmDialog({
       }
     >
       {error ? <Banner tone="error">{error}</Banner> : null}
-      <p className="admin-panel-sub">{body}</p>
+      <p className="sheet-sub">{body}</p>
     </Modal>
   );
 }

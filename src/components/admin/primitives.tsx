@@ -23,7 +23,7 @@ type FieldProps = {
 
 export function Field({ label, htmlFor, help, error, full, children }: FieldProps) {
   return (
-    <div className={full ? "field field-full" : "field"}>
+    <div className={full ? "field full" : "field"}>
       <label className="field-label" htmlFor={htmlFor}>
         {label}
       </label>
@@ -101,14 +101,14 @@ type CheckboxProps = {
 
 export function Checkbox({ id, checked, onChange, label }: CheckboxProps) {
   return (
-    <div className="checkbox-row">
+    <div className="check-row">
       <input
         id={id}
         type="checkbox"
         checked={checked}
         onChange={(event) => onChange(event.target.checked)}
       />
-      <label className="checkbox-label" htmlFor={id}>
+      <label className="check-label" htmlFor={id}>
         {label}
       </label>
     </div>
@@ -162,7 +162,7 @@ export function EmptyState({
 export function SkeletonRows({ rows = 4, columns = 4 }: { rows?: number; columns?: number }) {
   return (
     <div className="table-scroll">
-      <table className="admin-table">
+      <table className="ltable">
         <tbody>
           {Array.from({ length: rows }, (_, rowIndex) => (
             <tr key={rowIndex}>
@@ -186,11 +186,11 @@ export type Stat = { label: string; value: number | string };
 
 export function StatStrip({ stats }: { stats: ReadonlyArray<Stat> }) {
   return (
-    <div className="admin-stats">
+    <div className="totals">
       {stats.map((stat) => (
-        <div className="admin-stat" key={stat.label}>
-          <p className="admin-stat-num">{stat.value}</p>
-          <p className="admin-stat-label">{stat.label}</p>
+        <div className="total-row" key={stat.label}>
+          <p className="total-num">{stat.value}</p>
+          <p className="total-name">{stat.label}</p>
         </div>
       ))}
     </div>
@@ -207,12 +207,12 @@ export function PanelHead({
   actions?: ReactNode;
 }) {
   return (
-    <div className="admin-panel-head">
+    <div className="sheet-head">
       <div>
-        <h2 className="admin-panel-title">{title}</h2>
-        {sub ? <p className="admin-panel-sub">{sub}</p> : null}
+        <h2 className="sheet-title">{title}</h2>
+        {sub ? <p className="sheet-sub">{sub}</p> : null}
       </div>
-      {actions ? <div className="admin-panel-actions">{actions}</div> : null}
+      {actions ? <div className="sheet-actions">{actions}</div> : null}
     </div>
   );
 }

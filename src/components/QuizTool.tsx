@@ -1,9 +1,10 @@
 "use client";
 import { useState } from "react";
-import { ArrowClockwise, ListChecks } from "@phosphor-icons/react";
+import { ArrowClockwise } from "@phosphor-icons/react";
 import { SAMPLE_QUIZ } from "@/lib/data";
 import { sfx, unlockAudio } from "@/lib/sound";
 import { confettiBurst } from "@/lib/confetti";
+import Stamp from "./Stamp";
 
 export default function QuizTool() {
   const [done, setDone] = useState(false);
@@ -27,45 +28,51 @@ export default function QuizTool() {
     setPicked(null);
   }
 
+  const right = picked === SAMPLE_QUIZ.answerIndex;
+
   return (
-    <article className="tool-card quiz-card">
-      <div className="tool-head">
-        <h3 className="tool-title">
-          <ListChecks size={21} weight="bold" aria-hidden="true" /> Kuis Kilat
-        </h3>
-        <p className="tool-tag">Contoh soal pilihan ganda untuk layar bersama</p>
-      </div>
+    <div className="tool">
+      <p className="print-caption">Soal pilihan ganda</p>
       <p className="quiz-q">{SAMPLE_QUIZ.question}</p>
-      <div className="quiz-opts">
+
+      <div className="prows" role="group" aria-label="Pilihan jawaban">
         {SAMPLE_QUIZ.options.map((opt, i) => {
           const isCorrect = i === SAMPLE_QUIZ.answerIndex;
-          const wrong = done && picked !== null && picked === i && !isCorrect;
-          const showCorrect = done && isCorrect;
+          const wrong = done && picked === i && !isCorrect;
+          const reveal = done && isCorrect;
           return (
             <button
               key={i}
-              className={`quiz-opt${showCorrect ? " is-correct" : ""}${wrong ? " is-wrong" : ""}${done ? " locked" : ""}`}
+              className={`prow${reveal ? " is-correct" : ""}${wrong ? " is-wrong" : ""}${done ? " is-locked" : ""}`}
               type="button"
               disabled={done}
               onClick={() => handlePick(i)}
             >
-              {opt}
+              <span className="prow-key" aria-hidden="true">
+                {String.fromCharCode(65 + i)}
+              </span>
+              <span>{opt}</span>
             </button>
           );
         })}
       </div>
+
       <p className="quiz-feedback" aria-live="polite">
         {done
-          ? picked === SAMPLE_QUIZ.answerIndex
-            ? "Benar! Pas untuk kenalan lebih dalam."
-            : "Belum tepat. Jawaban yang benar sudah ditandai hijau."
+          ? right
+            ? "Benar. Pas untuk kenalan lebih dalam."
+            : "Belum tepat. Jawaban yang benar sudah dicap."
           : ""}
       </p>
-      {done && (
-        <button className="btn btn-ghost btn-sm" type="button" onClick={reset}>
-          <ArrowClockwise size={16} /> Ulangi soal
-        </button>
-      )}
-    </article>
+
+      {done ? (
+        <div className="keyrow">
+          {right ? <Stamp>Tepat</Stamp> : null}
+          <button className="pkey pkey-quiet" type="button" onClick={reset}>
+            <ArrowClockwise size={15} weight="bold" /> Ulangi soal
+          </button>
+        </div>
+      ) : null}
+    </div>
   );
 }

@@ -119,7 +119,7 @@ export function AdminApp() {
           </p>
           <button
             type="button"
-            className="btn btn-sm-outline"
+            className="pkey pkey-quiet pkey-sm"
             onClick={handleSignOut}
             disabled={signingOut}
           >
@@ -132,23 +132,23 @@ export function AdminApp() {
   }
 
   return (
-    <div className="admin-shell">
-      <header className="admin-topbar">
-        <div className="admin-topbar-inner">
-          <Link className="admin-brand" href="/">
-            <span className="admin-brand-mark" aria-hidden="true">
+    <div className="ledger">
+      <header className="ledger-bar">
+        <div className="ledger-bar-inner">
+          <Link className="ledger-brand" href="/">
+            <span className="ledger-brand-mark" aria-hidden="true">
               <LogoMark size={22} />
             </span>
             IceBreaker Hub
-            <span style={{ color: "var(--sun)", fontWeight: 700 }}>/ Admin</span>
+            <span className="ledger-slash">/ Admin</span>
           </Link>
-          <div className="admin-topbar-meta">
-            <span className="admin-topbar-email" title={profile.email}>
+          <div className="ledger-bar-meta">
+            <span className="ledger-who" title={profile.email}>
               {profile.email}
             </span>
             <button
               type="button"
-              className="btn btn-on-dark"
+              className="key"
               onClick={handleSignOut}
               disabled={signingOut}
             >
@@ -159,27 +159,27 @@ export function AdminApp() {
         </div>
       </header>
 
-      <nav className="admin-tabs" aria-label="Bagian admin">
-        <div className="admin-tabs-inner">
+      <nav className="ledger-tabs" aria-label="Bagian admin">
+        <div className="ledger-tabs-inner">
           {TABS.map((item) => (
             <button
               key={item.id}
               type="button"
-              className={tab === item.id ? "admin-tab is-active" : "admin-tab"}
+              className={tab === item.id ? "ledger-tab is-on" : "ledger-tab"}
               aria-current={tab === item.id ? "page" : undefined}
               onClick={() => setTab(item.id)}
             >
               {item.icon}
               {item.label}
               {counts[item.id] !== undefined ? (
-                <span className="admin-tab-count">{counts[item.id]}</span>
+                <span className="ledger-tab-count">{counts[item.id]}</span>
               ) : null}
             </button>
           ))}
         </div>
       </nav>
 
-      <main className="admin-body">
+      <main className="ledger-main">
         {tab === "catalog" ? (
           <IdeasPanel userId={profile.id} onCountChange={(n) => onCountChange("catalog", n)} />
         ) : null}

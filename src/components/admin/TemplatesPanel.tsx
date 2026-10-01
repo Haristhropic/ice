@@ -235,14 +235,14 @@ export function TemplatesPanel({
           <>
             <button
               type="button"
-              className="btn btn-sm-outline"
+              className="pkey pkey-quiet pkey-sm"
               onClick={reload}
               aria-label="Muat ulang template"
             >
               <ArrowClockwise size={16} weight="bold" />
               Muat ulang
             </button>
-            <button type="button" className="btn btn-sm-accent" onClick={openCreate}>
+            <button type="button" className="pkey pkey-stamp pkey-sm" onClick={openCreate}>
               <Plus size={16} weight="bold" />
               Tambah template
             </button>
@@ -269,7 +269,7 @@ export function TemplatesPanel({
           title="Gagal memuat template"
           body={loadError}
           action={
-            <button type="button" className="btn btn-sm-outline" onClick={reload}>
+            <button type="button" className="pkey pkey-quiet pkey-sm" onClick={reload}>
               Coba lagi
             </button>
           }
@@ -279,14 +279,14 @@ export function TemplatesPanel({
           title="Belum ada template"
           body="Template yang disimpan pengguna akan muncul di sini. Untuk mencoba alurnya, tambahkan satu secara manual."
           action={
-            <button type="button" className="btn btn-sm-accent" onClick={openCreate}>
+            <button type="button" className="pkey pkey-stamp pkey-sm" onClick={openCreate}>
               Tambah template
             </button>
           }
         />
       ) : (
         <div className="table-scroll">
-          <table className="admin-table">
+          <table className="ltable">
             <thead>
               <tr>
                 <th scope="col">Judul</th>
@@ -302,19 +302,19 @@ export function TemplatesPanel({
             <tbody>
               {items.map((item) => (
                 <tr key={item.id}>
-                  <td className="cell-strong">{item.title}</td>
-                  <td className="cell-muted">
+                  <td className="strong">{item.title}</td>
+                  <td className="muted">
                     {TOOL_OPTIONS.find((option) => option.value === item.tool_type)?.label ??
                       item.tool_type}
                   </td>
-                  <td className="cell-muted">{item.profiles?.email ?? "Akun terhapus"}</td>
-                  <td className="cell-muted cell-mono">{item.user_id.slice(0, 8)}...</td>
-                  <td className="cell-muted">{formatDate(item.updated_at)}</td>
+                  <td className="muted">{item.profiles?.email ?? "Akun terhapus"}</td>
+                  <td className="muted code">{item.user_id.slice(0, 8)}...</td>
+                  <td className="muted">{formatDate(item.updated_at)}</td>
                   <td>
                     <div className="cell-actions">
                       <button
                         type="button"
-                        className="btn btn-sm-outline"
+                        className="pkey pkey-quiet pkey-sm"
                         onClick={() => openEdit(item)}
                         aria-label={`Ubah ${item.title}`}
                         title="Ubah"
@@ -323,7 +323,7 @@ export function TemplatesPanel({
                       </button>
                       <button
                         type="button"
-                        className="btn btn-sm-danger"
+                        className="pkey pkey-danger pkey-sm"
                         onClick={() => {
                           setDeleteError(null);
                           setDeleting(item);
@@ -349,13 +349,13 @@ export function TemplatesPanel({
         sub="Disimpan ke tabel custom_templates."
         footer={
           <>
-            <button type="button" className="btn btn-sm-outline" onClick={closeForm}>
+            <button type="button" className="pkey pkey-quiet pkey-sm" onClick={closeForm}>
               Batal
             </button>
             <button
               type="submit"
               form="template-form"
-              className="btn btn-sm-accent"
+              className="pkey pkey-stamp pkey-sm"
               disabled={saving}
             >
               {saving ? <SpinnerGap size={16} weight="bold" /> : null}

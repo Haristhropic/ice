@@ -1,25 +1,32 @@
 "use client";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { PencilSimple, X, CircleNotch } from "@phosphor-icons/react";
+import { PencilSimple, X } from "@phosphor-icons/react";
 import { DEFAULT_WHEEL_OPTIONS } from "@/lib/data";
 import { sfx, unlockAudio } from "@/lib/sound";
 import { confettiBurst } from "@/lib/confetti";
 import { randFloat, randIdx } from "@/lib/rand";
-
-const SEG_COLORS = ["#D12F1E", "#FFC53D", "#1FB6A6", "#5B7FFF", "#FF8FB1", "#EC8A00", "#7D5BFF", "#4ECB71"];
-
-/* White text on the yellow/orange/mint segments measures 1.6-2.6:1, which is
-   unreadable when projected. Those get the dark ink instead (>= 7:1). */
-const LIGHT_SEGMENTS = new Set([1, 5, 7]);
+import Print from "./Print";
 
 const SPIN_MS = 4000;
 const SETTLE_MS = 200;
+const SIZE = 300;
+
+/* A thermal head prints one density, not a palette. The disc is dithered with
+   three densities so the wedges stay distinguishable from the back of a room
+   while the whole thing still reads as printed rather than designed. Ink is the
+   only colour on the wheel; the pointer carries the stamp so the eye has
+   exactly one place to land. */
+const DENSITY = ["#2b2a24", "#8e8b7e", "#cfcab9"];
+/* Each wedge's label takes the foreground or the ink depending on its density:
+   paper on the dark wedge clears 13:1, ink on the two lighter wedges clears
+   5.6:1 and 12:1. A single fixed label colour would fail on both light wedges. */
+const LABEL_ON = ["#f4f2ec", "#2b2a24", "#2b2a24"];
 
 export default function WheelTool() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [options, setOptions] = useState(DEFAULT_WHEEL_OPTIONS.join(", "));
   const [editing, setEditing] = useState(false);
-  const [result, setResult] = useState("Tekan Putar, lihat siapa gilirannya.");
+  const [result, setResult] = useState("");
   const [spinning, setSpinning] = useState(false);
   const rotation = useRef(0);
   const settleTimer = useRef<number | null>(null);
@@ -46,51 +53,59 @@ export default function WheelTool() {
     if (!ctx) return;
     const opts = parsedOptions();
     const dpr = window.devicePixelRatio || 1;
-    const size = 280;
-    canvas.width = size * dpr;
-    canvas.height = size * dpr;
+    canvas.width = SIZE * dpr;
+    canvas.height = SIZE * dpr;
     ctx.scale(dpr, dpr);
-    const cx = size / 2,
-      cy = size / 2,
-      r = size / 2 - 4;
-    const n = opts.length;
-    const seg = (Math.PI * 2) / n;
-    const fontFam =
-      getComputedStyle(document.body).getPropertyValue("--font-body").trim() ||
-      "sans-serif";
 
-    ctx.clearRect(0, 0, size, size);
+    const cx = SIZE / 2;
+    const cy = SIZE / 2;
+    const r = SIZE / 2 - 3;
+    const n = Math.max(opts.length, 1);
+    const seg = (Math.PI * 2) / n;
+    const mono = "600 12px ui-monospace, monospace";
+
+    ctx.clearRect(0, 0, SIZE, SIZE);
     ctx.beginPath();
     ctx.arc(cx, cy, r, 0, Math.PI * 2);
-    ctx.fillStyle = "#fff";
+    ctx.fillStyle = "#f4f2ec";
     ctx.fill();
 
     opts.forEach((opt, i) => {
       const start = -Math.PI / 2 + i * seg;
-      const end = start + seg;
       ctx.beginPath();
       ctx.moveTo(cx, cy);
-      ctx.arc(cx, cy, r, start, end);
+      ctx.arc(cx, cy, r, start, start + seg);
       ctx.closePath();
-      ctx.fillStyle = SEG_COLORS[i % SEG_COLORS.length];
+      ctx.fillStyle = DENSITY[i % DENSITY.length];
       ctx.fill();
+
+      /* Dot-matrix rule between wedges, the way a printed disc separates. */
+      ctx.beginPath();
+      ctx.moveTo(cx, cy);
+      ctx.lineTo(cx + Math.cos(start) * r, cy + Math.sin(start) * r);
+      ctx.strokeStyle = "#f4f2ec";
+      ctx.lineWidth = 2;
+      ctx.stroke();
+
       ctx.save();
       ctx.translate(cx, cy);
       ctx.rotate(start + seg / 2);
       ctx.textAlign = "right";
-      ctx.fillStyle = LIGHT_SEGMENTS.has(i) ? "#3a2c22" : "#fff";
-      ctx.font = `600 13px ${fontFam}`;
-      ctx.shadowColor = "rgba(0,0,0,0.35)";
-      ctx.shadowBlur = 3;
-      const label = opt.length > 16 ? opt.slice(0, 15) + "…" : opt;
-      ctx.fillText(label, r - 14, 4);
+      ctx.fillStyle = LABEL_ON[i % LABEL_ON.length];
+      ctx.font = mono;
+      const label = opt.length > 14 ? `${opt.slice(0, 13)}…` : opt;
+      ctx.fillText(label.toUpperCase(), r - 12, 4);
       ctx.restore();
     });
 
+    /* Unprinted cells in the hub: the machine's own blank. */
     ctx.beginPath();
-    ctx.arc(cx, cy, 30, 0, Math.PI * 2);
-    ctx.fillStyle = "#fff";
+    ctx.arc(cx, cy, 34, 0, Math.PI * 2);
+    ctx.fillStyle = "#f4f2ec";
     ctx.fill();
+    ctx.strokeStyle = "#2b2a24";
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
   }, [parsedOptions]);
 
   function applyOptions() {
@@ -98,8 +113,7 @@ export default function WheelTool() {
       setResult("Tunggu roda berhenti dulu sebelum ganti daftar.");
       return;
     }
-    const opts = parsedOptions();
-    if (opts.length < 2) {
+    if (parsedOptions().length < 2) {
       setResult("Isi minimal 2 pilihan.");
       return;
     }
@@ -110,7 +124,7 @@ export default function WheelTool() {
       wheel.style.transition = "none";
       wheel.style.transform = "rotate(0deg)";
     }
-    setResult("Daftar baru siap. Tekan Putar!");
+    setResult("Daftar baru siap.");
   }
 
   function spin() {
@@ -126,12 +140,11 @@ export default function WheelTool() {
 
     setSpinning(true);
     const segDeg = 360 / opts.length;
-    const extra = 5 + randIdx(4);
-    const target = rotation.current + extra * 360 + randFloat(360);
+    const target = rotation.current + (5 + randIdx(4)) * 360 + randFloat(360);
     rotation.current = target;
 
-    // Reduced motion collapses the CSS transition to ~0ms, so waiting the full
-    // duration would leave the user staring at a motionless wheel.
+    /* Reduced motion collapses the transition to ~0ms, so waiting the full
+       duration would leave the user staring at a motionless wheel. */
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
     wheel.style.transition = reduced
@@ -144,8 +157,7 @@ export default function WheelTool() {
         const normalized = ((target % 360) + 360) % 360;
         const pointerAt = 360 - normalized;
         const idx = Math.floor((pointerAt % 360) / segDeg) % opts.length;
-        const picked = opts[idx];
-        setResult(`${picked}. Giliran kamu.`);
+        setResult(opts[idx]);
         setSpinning(false);
         wheel.style.transition = "none";
         sfx.ding();
@@ -156,65 +168,91 @@ export default function WheelTool() {
   }
 
   return (
-    <article className="tool-card wheel-card">
-      <div className="tool-head">
-        <h3 className="tool-title">
-          <CircleNotch size={21} weight="bold" aria-hidden="true" /> Roda Keberuntungan
-        </h3>
-        <p className="tool-tag">Pilih peserta atau tantangan secara acak</p>
-      </div>
-      <div className="wheel-stage">
-        <div className="wheel-wrap">
+    <div className="tool">
+      <p className="print-caption">Giliran siapa</p>
+
+      {result ? (
+        <Print token={result} as="p" className="print-out">
+          {result}
+        </Print>
+      ) : (
+        <p className="print-out print-out-idle">
+          Tekan putar, roda mencetak satu nama.
+        </p>
+      )}
+
+      <div className="wheel-bay">
+        <div className="wheel-plate">
           <canvas
             ref={canvasRef}
-            className="wheel"
-            width="280"
-            height="280"
+            className="wheel-disc"
+            width={SIZE}
+            height={SIZE}
             role="img"
-            aria-label="Roda keberuntungan"
+            aria-label="Roda"
           />
           <span className="wheel-pointer" aria-hidden="true" />
           <button
-            className="wheel-spin btn btn-primary"
+            className="wheel-hub"
             type="button"
             onClick={spin}
             disabled={spinning}
           >
-            Putar!
+            {spinning ? "Berputar" : "Putar"}
           </button>
         </div>
+
         <div className="wheel-side">
-          <p className="wheel-result" aria-live="polite">
-            {result}
-          </p>
-          <button
-            className="link-btn"
-            type="button"
-            aria-expanded={editing}
-            aria-controls="wheel-edit"
-            onClick={() => setEditing((p) => !p)}
-          >
-            {editing ? <X size={15} /> : <PencilSimple size={15} />}
-            {editing ? "Tutup editor" : "Edit pilihan"}
-          </button>
-          {editing && (
+          <dl className="facts">
+            <div className="fact">
+              <dt>Pilihan</dt>
+              <span className="leader" aria-hidden="true" />
+              <dd>{parsedOptions().length}</dd>
+            </div>
+          </dl>
+          <div className="keyrow">
+            <button
+              className="pkey pkey-stamp"
+              type="button"
+              onClick={spin}
+              disabled={spinning}
+            >
+              Putar
+            </button>
+            <button
+              className="pkey pkey-quiet pkey-sm"
+              type="button"
+              aria-expanded={editing}
+              aria-controls="wheel-edit"
+              onClick={() => setEditing((p) => !p)}
+            >
+              {editing ? <X size={14} weight="bold" /> : <PencilSimple size={14} weight="bold" />}
+              {editing ? "Tutup" : "Ganti daftar"}
+            </button>
+          </div>
+          {editing ? (
             <div className="wheel-edit" id="wheel-edit">
-              <label className="visually-hidden" htmlFor="wheel-opts">
-                Daftar pilihan roda, pisahkan dengan koma
+              <label className="field-label" htmlFor="wheel-opts">
+                Nama per baris, atau pisahkan dengan koma
               </label>
               <textarea
                 id="wheel-opts"
-                rows={3}
+                className="print-textarea"
+                rows={4}
                 value={options}
                 onChange={(e) => setOptions(e.target.value)}
               />
-              <button className="btn btn-ghost btn-sm" type="button" onClick={applyOptions}>
+              <button
+                className="pkey pkey-quiet pkey-sm"
+                type="button"
+                onClick={applyOptions}
+              >
                 Pakai daftar ini
               </button>
             </div>
-          )}
+          ) : null}
         </div>
       </div>
-    </article>
+    </div>
   );
 }

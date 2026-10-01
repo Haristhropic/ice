@@ -1,0 +1,140 @@
+{
+  "title": "Choose the visual world",
+  "question": "The roll landed on the thermal receipt. Keep it, take an alternate, or re-roll. Every card is a different layout topology, not a restyle of the current one.",
+  "options": [
+    {
+      "id": "assigned",
+      "label": "Struk Thermal",
+      "kicker": "THE ROLL",
+      "lineage": "the thermal receipt every warung, canteen and kopdar prints",
+      "thesis": "The console is a receipt printer: every activity prints line by line down one narrow column of paper.",
+      "palette": ["#232220", "#f4f2ec", "#2b2a24", "#2f3d8f"],
+      "materials": ["thermal paper stock", "dot-matrix monospace", "torn perforated edge"],
+      "viewport": "A full-height paper column dead centre on a dark laminate counter. The six tools are numbered menu lines with dotted leaders and durations, and the running activity prints beneath them, one character at a time.",
+      "risk": "Reads as novelty stationery the moment the print is faked rather than typed, and a narrow column throws away a projector if the type is set small.",
+      "raised": [
+        {
+          "from": "the bazaar",
+          "raise": "From the bazaar: every catalog line carries its own stamped tag of origin, so duration and gadget-free are visible before you read the description."
+        },
+        {
+          "from": "the specimen",
+          "raise": "From the specimen: hierarchy carried by scale alone, no ornamental framing, no card wrapped around the thing being said."
+        },
+        {
+          "from": "the sampler",
+          "raise": "From the sampler: the tools run in bands of increasing difficulty, so a first-timer's path through them is legible on the strip itself."
+        }
+      ],
+      "wireframe": {
+        "cols": 12,
+        "rows": 10,
+        "regions": [
+          { "label": "counter gutter, ambient", "x": 0, "y": 0, "w": 3, "h": 10 },
+          { "label": "shop header, name + strapline", "x": 3, "y": 0, "w": 6, "h": 1 },
+          { "label": "tool menu, numbered lines, dotted leaders, durations", "x": 3, "y": 1, "w": 6, "h": 3 },
+          { "label": "running activity prints here, line by line", "x": 3, "y": 4, "w": 6, "h": 5, "accent": true },
+          { "label": "tear edge", "x": 3, "y": 9, "w": 6, "h": 1 },
+          { "label": "stamp well", "x": 9, "y": 0, "w": 3, "h": 10 }
+        ]
+      },
+      "comp": ".impeccable/mocks/decision/assigned.webp"
+    },
+    {
+      "id": "model-pick",
+      "label": "Papan Tulis",
+      "kicker": "IMPECCABLE’S PICK",
+      "lineage": "the classroom whiteboard and its aluminium marker tray",
+      "thesis": "The console is the board at the front of the room: one wide surface, wiped and rewritten, written marker-huge.",
+      "palette": ["#e9ece6", "#15161a", "#1f4f8f", "#c0392b"],
+      "materials": ["enamel on steel", "aluminium marker tray", "wiped marker ghosting"],
+      "viewport": "One full-bleed board. Tools lie in the tray across the top with the active marker resting on the lip, the running activity is written enormous and left-aligned with no card around it, and catalog index cards stay clipped to the right rail, always visible.",
+      "risk": "The direction most runs in this category land on, and a plain white board left uncommitted is indistinguishable from clean minimalism.",
+      "comp": ".impeccable/mocks/decision/model-pick.webp"
+    },
+    {
+      "id": "challenger-seven-segment",
+      "label": "The Segment Wall",
+      "verdict": "competitive",
+      "lineage": "alarm clocks, gas-station price totems, scoreboards, microwave panels",
+      "thesis": "Every number this product already owns is a digit, so the whole surface is one eight-cell mask with the unlit cells designed too.",
+      "palette": ["#26241f", "#ff3b1f", "#3a3833", "#efe9d8"],
+      "materials": ["matte bezel plastic", "silkscreened ivory legend", "LED segment glass"],
+      "viewport": "A fixed band of segment cells across the top carries code, clock and queue. The main display below holds enormous live digits beside a dot-matrix prose cell. Controls are a key row along the bottom.",
+      "case": "Room code, timer, click score and countdown are already digits, so it fuses cleanly onto the four numeric surfaces; the riddle clue and the question text cannot fit an eight-cell mask.",
+      "risk": "Prose is what a facilitator actually reads aloud, and a dot-matrix cell is the one place this product cannot speak plainly.",
+      "comp": ".impeccable/mocks/decision/challenger-seven-segment.webp",
+      "hero": "https://impeccable.style/worlds/cards/signals-instruments-seven-segment-alarm-clock-hero.webp"
+    },
+    {
+      "id": "challenger-quilt",
+      "label": "Patchwork",
+      "verdict": "competitive",
+      "lineage": "pieced quilts of worn garments, every block a different body and date",
+      "thesis": "The catalog is the only surface that ever needed a grid of cards, so it becomes a pieced quilt of unequal blocks with each caption seamed to its patch.",
+      "palette": ["#5b7a99", "#d9cfbb", "#1b1b1e", "#a8322c"],
+      "materials": ["worn cotton", "new bright stitch", "iron-gall caption ink"],
+      "viewport": "A header patch spanning most of the width carries the running activity, two narrower patches beside it hold the timer and the room code, and below them the catalog is a staggered patchwork of unequal blocks joined by visible seams.",
+      "case": "It is the only system on the table that refuses equal blocks outright, which is exactly the disease in the current catalog; it fuses cleanly and loses only on audience identification, since pieced cloth reads craft rather than classroom.",
+      "risk": "Craft reads cosy, and a facilitator projecting to adults needs the room to take them seriously.",
+      "comp": ".impeccable/mocks/decision/challenger-quilt.webp",
+      "hero": "https://impeccable.style/worlds/cards/textiles-weave-drape-fashion-memory-quilt-atlas-hero.webp"
+    },
+    {
+      "id": "declined-bazaar",
+      "label": "Moon-Shadow Bazaar",
+      "verdict": "declined",
+      "lineage": "a midnight lane where merchants trade shadows",
+      "thesis": "Goods tagged with a small ticket of origin and length, traded by light.",
+      "palette": ["#141a2e", "#2a2a38", "#c79a3a", "#e8eaf2"],
+      "materials": ["layered soft blacks", "saffron stall canvas"],
+      "case": "Fuses poorly: nothing in a lane of traded shadows is the classroom a facilitator walks into.",
+      "kept": "Kept the hand-marked tag of origin, raised onto every catalog line."
+    },
+    {
+      "id": "declined-specimen",
+      "label": "Type Specimen",
+      "verdict": "declined",
+      "lineage": "a variable-font specimen sheet",
+      "thesis": "Hierarchy by scale contrast alone, no ornament so the letterforms carry it.",
+      "palette": ["#faf9f6", "#111111", "#0055ff"],
+      "materials": ["bare paper", "flat ink"],
+      "case": "Fuses thinly: it holds scale contrast but has no material world, and lands on the mono-label-plus-giant-type look this category defaults to.",
+      "kept": "Kept scale-alone hierarchy, raised as the ban on ornamental framing."
+    },
+    {
+      "id": "declined-sampler",
+      "label": "Stitched Sampler",
+      "verdict": "declined",
+      "lineage": "a child's alphabet sampler, each band looser than the last",
+      "thesis": "Bands stacked in increasing difficulty, signed and dated at the foot.",
+      "palette": ["#e3dccb", "#2f4a6d", "#8c3b2e", "#4a5c3a"],
+      "materials": ["linen", "silk thread", "sampler stitch"],
+      "case": "Fuses poorly: a band of increasing difficulty maps onto none of the six tools, only onto the order they happen to sit in.",
+      "kept": "Kept the increasing-difficulty path, raised onto the tool order."
+    },
+    {
+      "id": "declined-roster",
+      "label": "Character Roster",
+      "verdict": "declined",
+      "lineage": "a goods catalog of ranked mascots with name plates and birthdays",
+      "thesis": "A finite ranked roster, each entry with its own name plate and one-line note.",
+      "palette": ["#fdf4ef", "#f2b8c6", "#7b4b94", "#ffd66b"],
+      "materials": ["flat spot fills", "white keyline"],
+      "case": "Fuses worst of any hand: a ranked roster of characters with fixed personal furniture is the precise opposite of a room of strangers nobody has assigned a role in.",
+      "kept": "Nothing kept."
+    }
+  ],
+  "reroll": { "registers": ["safer", "bolder"] },
+  "buildPath": { "value": "code" },
+  "steer": true,
+  "canon": true,
+  "canonCard": {
+    "label": "The category standard",
+    "thesis": "What every icebreaker site ships, executed at full craft instead of at half.",
+    "palette": ["#ffffff", "#111827", "#2563eb"],
+    "materials": ["clean grid", "soft product illustration"],
+    "viewport": "Top nav, a centred hero with one primary action, a three-up feature grid of the tools, then a footer.",
+    "risk": "Indistinguishable from the competition by design, which is the point of having it on the table."
+  }
+}

@@ -1,0 +1,229 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - link "Langsung ke alat yang jalan" [ref=e3] [cursor=pointer]:
+      - /url: "#mesin"
+    - complementary "Mesin" [ref=e4]:
+      - generic [ref=e5]:
+        - paragraph [ref=e6]: No. struk
+        - paragraph [ref=e7]:
+          - generic [ref=e8]: "0001"
+      - generic [ref=e9]:
+        - paragraph [ref=e10]: Lama jalan
+        - paragraph [ref=e11]: 00:00:00
+      - generic [ref=e12]:
+        - paragraph [ref=e13]: Kode room
+        - paragraph [ref=e14]: Belum ada. Ruangan ikut belum dijalankan, jadi tidak ada kode yang bisa dibagi.
+      - button "Cetak struk" [ref=e15] [cursor=pointer]
+    - main [ref=e18]:
+      - generic [ref=e20]:
+        - heading "IceBreaker Hub" [level=1] [ref=e27]
+        - paragraph [ref=e28]: Enam aktivitas untuk kelas, rapat, dan kumpul keluarga. Buka di browser, tanpa install, tanpa akun.
+      - region [ref=e29]:
+        - generic [ref=e30]:
+          - heading "Pilih aktivitas" [level=2] [ref=e31]
+          - generic [ref=e32]: 6 BARIS
+        - paragraph [ref=e33]: Angka di depan baris adalah urutan tingkat kesulitan. Baris yang aktif sudah siap dijalankan.
+        - generic [ref=e34]:
+          - generic [ref=e35]: Pemula
+          - list [ref=e38]:
+            - listitem [ref=e39]:
+              - button "Timer + Suara 5 mnt MUDAH. Batas waktu dengan alarm, gong, dan tepuk tangan." [ref=e40] [cursor=pointer]:
+                - generic [aria-hidden] [ref=e41]: "01"
+                - generic [ref=e42]:
+                  - generic [ref=e43]: Timer + Suara
+                  - generic [ref=e45]: 5 mnt
+                - generic [ref=e46]: MUDAH. Batas waktu dengan alarm, gong, dan tepuk tangan.
+            - listitem [ref=e49]:
+              - button "Klik Cepat 2 mnt MUDAH. Hitung klik dalam 10 detik, layar besar untuk kelas." [ref=e50] [cursor=pointer]:
+                - generic [aria-hidden] [ref=e51]: "02"
+                - generic [ref=e52]:
+                  - generic [ref=e53]: Klik Cepat
+                  - generic [ref=e55]: 2 mnt
+                - generic [ref=e56]: MUDAH. Hitung klik dalam 10 detik, layar besar untuk kelas.
+        - generic [ref=e59]:
+          - generic [ref=e60]: Lanjut
+          - list [ref=e63]:
+            - listitem [ref=e64]:
+              - button "Roda 2 mnt SEDANG. Pilih peserta, nama, atau tantangan secara acak." [ref=e65] [cursor=pointer]:
+                - generic [aria-hidden] [ref=e66]: "03"
+                - generic [ref=e67]:
+                  - generic [ref=e68]: Roda
+                  - generic [ref=e70]: 2 mnt
+                - generic [ref=e71]: SEDANG. Pilih peserta, nama, atau tantangan secara acak.
+            - listitem [ref=e74]:
+              - button "Pertanyaan 5 mnt SEDANG. Kartu pertanyaan per kategori, satu klik untuk ambil." [ref=e75] [cursor=pointer]:
+                - generic [aria-hidden] [ref=e76]: "04"
+                - generic [ref=e77]:
+                  - generic [ref=e78]: Pertanyaan
+                  - generic [ref=e80]: 5 mnt
+                - generic [ref=e81]: SEDANG. Kartu pertanyaan per kategori, satu klik untuk ambil.
+            - listitem [ref=e84]:
+              - button "Kuis 10 mnt SEDANG. Pilihan ganda, langsung ketahuan mana yang benar." [ref=e85] [cursor=pointer]:
+                - generic [aria-hidden] [ref=e86]: "05"
+                - generic [ref=e87]:
+                  - generic [ref=e88]: Kuis
+                  - generic [ref=e90]: 10 mnt
+                - generic [ref=e91]: SEDANG. Pilihan ganda, langsung ketahuan mana yang benar.
+        - generic [ref=e94]:
+          - generic [ref=e95]: Tantangan
+          - list [ref=e98]:
+            - listitem [ref=e99]:
+              - button "Tebak 10 mnt SULIT. Petunjuk bertahap, dijawab bersama-sama." [ref=e100] [cursor=pointer]:
+                - generic [aria-hidden] [ref=e101]: "06"
+                - generic [ref=e102]:
+                  - generic [ref=e103]: Tebak
+                  - generic [ref=e105]: 10 mnt
+                - generic [ref=e106]: SULIT. Petunjuk bertahap, dijawab bersama-sama.
+      - generic [ref=e109]: POTONG
+      - region [ref=e114]:
+        - generic [ref=e115]:
+          - generic [ref=e116]:
+            - generic [ref=e117]: "03"
+            - heading "Roda" [level=2] [ref=e118]
+            - generic [ref=e119]: SEDANG
+            - generic [ref=e120]: SIAP
+          - generic [ref=e121]:
+            - paragraph [ref=e122]: Giliran siapa
+            - paragraph [ref=e123]: Tekan putar, roda mencetak satu nama.
+            - generic [ref=e124]:
+              - generic [ref=e125]:
+                - img "Roda" [ref=e126]
+                - button "Putar" [ref=e128] [cursor=pointer]
+              - generic [ref=e129]:
+                - generic [ref=e131]:
+                  - term [ref=e132]: Pilihan
+                  - definition [ref=e134]: "6"
+                - generic [ref=e135]:
+                  - button "Putar" [ref=e136] [cursor=pointer]
+                  - button "Ganti daftar" [ref=e137] [cursor=pointer]
+      - region [ref=e140]:
+        - generic [ref=e141]:
+          - heading "Katalog game offline" [level=2] [ref=e142]
+          - generic [ref=e143]: TANPA ALAT
+        - paragraph [ref=e144]: Kumpulan game yang tidak butuh gadget. Cetak struk ini kalau mau dibawa ke ruang sebelah.
+        - group "Saring katalog game" [ref=e145]:
+          - generic [ref=e146]:
+            - generic [ref=e147]: Acara
+            - group "Acara" [ref=e148]:
+              - button "Semua" [pressed] [ref=e149] [cursor=pointer]
+              - button "Kelas" [ref=e150] [cursor=pointer]
+              - button "Rapat" [ref=e151] [cursor=pointer]
+              - button "Workshop" [ref=e152] [cursor=pointer]
+              - button "Pesta" [ref=e153] [cursor=pointer]
+          - generic [ref=e154]:
+            - generic [ref=e155]: Gadget
+            - group "Gadget" [ref=e156]:
+              - button "Semua" [pressed] [ref=e157] [cursor=pointer]
+              - button "Tanpa gadget" [ref=e158] [cursor=pointer]
+              - button "Pakai layar" [ref=e159] [cursor=pointer]
+          - generic [ref=e160]:
+            - generic [ref=e161]: Durasi
+            - group "Durasi" [ref=e162]:
+              - button "Semua" [pressed] [ref=e163] [cursor=pointer]
+              - button "Quick" [ref=e164] [cursor=pointer]
+              - button "Medium" [ref=e165] [cursor=pointer]
+              - button "Long" [ref=e166] [cursor=pointer]
+          - generic [ref=e167]:
+            - generic [ref=e168]: Usia
+            - group "Usia" [ref=e169]:
+              - button "Semua" [pressed] [ref=e170] [cursor=pointer]
+              - button "Anak" [ref=e171] [cursor=pointer]
+              - button "Remaja" [ref=e172] [cursor=pointer]
+              - button "Dewasa" [ref=e173] [cursor=pointer]
+              - button "Lintas" [ref=e174] [cursor=pointer]
+        - paragraph [ref=e175]: 6 game tampil
+        - list [ref=e176]:
+          - listitem [ref=e177]:
+            - generic [aria-hidden] [ref=e178]: "01"
+            - generic [ref=e179]:
+              - heading "Simon Berkata" [level=3] [ref=e180]
+              - paragraph [ref=e181]: Ikuti perintah hanya jika dimulai dengan "Simon berkata". Salah sedikit, keluar dulu.
+              - generic [ref=e182]:
+                - generic [ref=e183]: Tanpa gadget
+                - generic [ref=e184]: 1-3 mnt
+                - generic [ref=e185]: 5-30 orang
+                - generic [ref=e186]: Tidak ada. Cukup ruang untuk berdiri.
+          - listitem [ref=e187]:
+            - generic [aria-hidden] [ref=e188]: "02"
+            - generic [ref=e189]:
+              - heading "Two Truths, One Lie" [level=3] [ref=e190]
+              - paragraph [ref=e191]: Setiap orang menyebut dua fakta dan satu bohong. Tebak mana yang palsu.
+              - generic [ref=e192]:
+                - generic [ref=e193]: Tanpa gadget
+                - generic [ref=e194]: 5-10 mnt
+                - generic [ref=e195]: 4-20 orang
+                - generic [ref=e196]: Tidak ada.
+          - listitem [ref=e197]:
+            - generic [aria-hidden] [ref=e198]: "03"
+            - generic [ref=e199]:
+              - heading "Simpul Manusia" [level=3] [ref=e200]
+              - paragraph [ref=e201]: Berdiri melingkar, pegang tangan yang bukan di sampingmu, lalu urai simpul tanpa lepas.
+              - generic [ref=e202]:
+                - generic [ref=e203]: Tanpa gadget
+                - generic [ref=e204]: 5-10 mnt
+                - generic [ref=e205]: 8-15 orang
+                - generic [ref=e206]: Tidak ada. Ruang cukup luas.
+          - listitem [ref=e207]:
+            - generic [aria-hidden] [ref=e208]: "04"
+            - generic [ref=e209]:
+              - heading "Tebak Gaya" [level=3] [ref=e210]
+              - paragraph [ref=e211]: Peragakan kata atau film tanpa suara. Tim menebak sebelum waktu habis.
+              - generic [ref=e212]:
+                - generic [ref=e213]: Tanpa gadget
+                - generic [ref=e214]: 5-10 mnt
+                - generic [ref=e215]: 6-30 orang
+                - generic [ref=e216]: Kertas berisi daftar kata.
+          - listitem [ref=e217]:
+            - generic [aria-hidden] [ref=e218]: "05"
+            - generic [ref=e219]:
+              - heading "Satu Kata" [level=3] [ref=e220]
+              - paragraph [ref=e221]: Tema dibacakan, tiap orang jawab dengan satu kata paling cepat lewat chat.
+              - generic [ref=e222]:
+                - generic [ref=e223]: Pakai layar
+                - generic [ref=e224]: 1-3 mnt
+                - generic [ref=e225]: 4-50 orang
+                - generic [ref=e226]: Fitur chat di Zoom atau Teams.
+          - listitem [ref=e227]:
+            - generic [aria-hidden] [ref=e228]: "06"
+            - generic [ref=e229]:
+              - heading "Nama + Gerakan" [level=3] [ref=e230]
+              - paragraph [ref=e231]: Sebut nama sambil bikin gerakan. Semua menirukan, lalu lanjut ke orang berikutnya.
+              - generic [ref=e232]:
+                - generic [ref=e233]: Pakai layar
+                - generic [ref=e234]: 1-3 mnt
+                - generic [ref=e235]: 4-30 orang
+                - generic [ref=e236]: Kamera menyala.
+      - region [ref=e237]:
+        - generic [ref=e238]:
+          - heading "Untuk siapa" [level=2] [ref=e239]
+          - generic [ref=e240]: SEMUA UKURAN RUANG
+        - generic [ref=e241]:
+          - generic [ref=e242]:
+            - term [ref=e243]:
+              - generic [ref=e244]: Pendidik
+              - generic [ref=e246]: 3-5 mnt
+            - definition [ref=e247]: Mulai kelas 5 menit pertama dengan senyum, bukan dengusan.
+          - generic [ref=e248]:
+            - term [ref=e249]:
+              - generic [ref=e250]: Fasilitator HR
+              - generic [ref=e252]: 5-10 mnt
+            - definition [ref=e253]: Cairkan rapat bulanan dan townhall, profesional tapi tetap seru.
+          - generic [ref=e254]:
+            - term [ref=e255]:
+              - generic [ref=e256]: Event Host
+              - generic [ref=e258]: 10+ mnt
+            - definition [ref=e259]: Game panggung, undian mini, dan kuis kilat untuk audiens ramai.
+          - generic [ref=e260]:
+            - term [ref=e261]:
+              - generic [ref=e262]: Keluarga & Teman
+              - generic [ref=e264]: Santai
+            - definition [ref=e265]: Permainan santai dan pertanyaan deep talk buat kumpul rumah.
+    - complementary "Kendali presenter" [ref=e270]:
+      - button "Mode presentasi" [ref=e271] [cursor=pointer]
+      - link "Peserta masuk dengan kode" [ref=e274] [cursor=pointer]:
+        - /url: /room
+      - button "Lompat ke katalog" [ref=e277] [cursor=pointer]
+      - link "Admin" [ref=e280] [cursor=pointer]:
+        - /url: /admin
+      - paragraph [ref=e283]: Tekan F11 untuk layar penuh. Struk ini bisa dicetak sebagai catatan sesi lewat Cetak struk.
+  - alert [ref=e284]

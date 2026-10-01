@@ -126,7 +126,7 @@ export function UsersPanel({
         actions={
           <button
             type="button"
-            className="btn btn-sm-outline"
+            className="pkey pkey-quiet pkey-sm"
             onClick={reload}
             aria-label="Muat ulang daftar pengguna"
           >
@@ -156,7 +156,7 @@ export function UsersPanel({
           title="Gagal memuat pengguna"
           body={loadError}
           action={
-            <button type="button" className="btn btn-sm-outline" onClick={reload}>
+            <button type="button" className="pkey pkey-quiet pkey-sm" onClick={reload}>
               Coba lagi
             </button>
           }
@@ -168,7 +168,7 @@ export function UsersPanel({
         />
       ) : (
         <div className="table-scroll">
-          <table className="admin-table">
+          <table className="ltable">
             <thead>
               <tr>
                 <th scope="col">Email</th>
@@ -183,8 +183,8 @@ export function UsersPanel({
                 const isSelf = profile.id === currentUserId;
                 return (
                   <tr key={profile.id}>
-                    <td className="cell-strong">{profile.email}</td>
-                    <td className="cell-muted">{profile.full_name ?? "-"}</td>
+                    <td className="strong">{profile.email}</td>
+                    <td className="muted">{profile.full_name ?? "-"}</td>
                     <td>
                       <div
                         style={{
@@ -196,7 +196,7 @@ export function UsersPanel({
                       >
                         <Pill tone={roleTone(profile.role)}>{roleLabel(profile.role)}</Pill>
                         {isSelf ? (
-                          <span className="cell-muted">kamu</span>
+                          <span className="muted">kamu</span>
                         ) : (
                           <div style={{ maxWidth: 150 }}>
                             <SelectInput
@@ -212,8 +212,8 @@ export function UsersPanel({
                         )}
                       </div>
                     </td>
-                    <td className="cell-muted">{formatDate(profile.created_at)}</td>
-                    <td className="cell-muted cell-mono">{profile.id.slice(0, 8)}...</td>
+                    <td className="muted">{formatDate(profile.created_at)}</td>
+                    <td className="muted code">{profile.id.slice(0, 8)}...</td>
                   </tr>
                 );
               })}
@@ -231,7 +231,7 @@ export function UsersPanel({
           <>
             <button
               type="button"
-              className="btn btn-sm-outline"
+              className="pkey pkey-quiet pkey-sm"
               onClick={cancelChange}
               disabled={saving}
             >
@@ -239,7 +239,7 @@ export function UsersPanel({
             </button>
             <button
               type="button"
-              className="btn btn-sm-accent"
+              className="pkey pkey-stamp pkey-sm"
               onClick={() => void confirmChange()}
               disabled={saving}
             >
@@ -253,7 +253,7 @@ export function UsersPanel({
 
         {pending ? (
           <>
-            <p className="admin-panel-sub">
+            <p className="sheet-sub">
               Peran <strong>{pending.email}</strong> akan diubah menjadi{" "}
               <strong>{roleLabel(pending.role)}</strong>.
             </p>

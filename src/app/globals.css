@@ -1,48 +1,66 @@
-@import "tailwindcss";
+/* ==========================================================================
+   STRUK THERMAL - IceBreaker Hub
+   A thermal receipt printer. The page is a dark laminate counter; the paper
+   strip lying on it is the one bright field, and it runs the whole length of
+   the session. Activities print onto it line by line, so the strip a
+   facilitator finishes with is the record of the session they ran.
 
-/* =============================================
-   IceBreaker Hub - design system (ported dari
-   prototipe statis, diadaptasi ke Next.js)
-   Palette: paper/ink/coral + mustard
-   Font: Baloo 2 (display) + Nunito (body)
-   Radius: cards 20px, pill buttons, inputs 14px, tools 24px
-   ============================================= */
+   Two voices, and the split is load-bearing: Archivo is the human, Azeret
+   Mono is the machine. Nothing is written in mono for decoration.
+
+   Elevation is declared exactly once, and this world has three levels:
+     raised   a warm offset shadow - paper lying on the counter
+     recessed an inset shadow       - a counter window holding an instrument
+     flat     print                 - a dotted rule and nothing else
+   Never a border and a shadow together.
+   ========================================================================== */
 
 :root {
-  --paper: #fff7e8;
-  --paper-2: #fcefd9;
-  --ink: #32281f;
-  --ink-2: #6b5a4b;
-  --ink-3: #7d6c5c;
-  --accent: #d12f1e;
-  --accent-deep: #b02616;
-  /* Decorative surfaces use neutral tints plus coral, so coral is the only
-     saturated accent. State colours (correct, live, published) use the
-     dedicated --ok/--info pairs so meaning never depends on a surface tint. */
-  --soft-red: #ffe3dc;
-  --soft-red-2: #ff5a3d;
-  --tint: #f7e6c4;
-  --tint-deep: #e8cf9c;
-  --tint-ink: #6b5a3a;
-  --ok: #2f7d5d;
-  --ok-bg: #e4f0e8;
-  --ok-ink: #1d5340;
-  --info: #3f6591;
-  --info-bg: #e6edf5;
-  --info-ink: #2b4767;
-  --line: #eaddc6;
-  --line-light: #f2e8d4;
-  --radius-card: 20px;
-  --radius-pill: 999px;
-  --radius-input: 14px;
-  --radius-tool: 24px;
-  --radius-sm: 12px;
-  --radius-lg: 32px;
-  --transition-base: 0.28s cubic-bezier(0.16, 1, 0.3, 1);
-  --transition-wobble: 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
-  --max-w: 1200px;
-  --surface-sunken: #fbf0dd;
+  /* The counter. Flat laminate with one soft sheen where the room light falls;
+     deliberately not a pattern or a grain overlay. */
+  --counter: #232220;
+  --counter-2: #2b2a26;
+  --counter-3: #35332e;
+
+  /* Thermal stock. A cool white with a faint blue cast. NOT cream - cream is
+     where every warm subject lands by default. */
+  --paper: #f4f2ec;
+  --paper-2: #ebe8e0;
+  --paper-3: #dedad0;
+
+  /* A thermal head cannot print true black; the darkest it reaches is a soft
+     blue-black, and old print fades toward the paper. */
+  --ink: #2b2a24;
+  --ink-2: #6a6960;
+  /* Faint print. This value is calibrated to clear 4.5:1 ON PAPER, because most
+     faint text in this world sits on paper, not on the counter. The counter has
+     its own faint value below; do not reuse this one there. */
+  --ink-3: #6e6b62;
+  --counter-ink-3: #9b9a92;
+
+  /* One accent, and it is tinta biru: the rubber stamp on a receipts roll. */
+  --stamp: #2f3d8f;
+  --stamp-deep: #232e69;
+  --stamp-2: #4a5ab5;
+
+  /* The perforated / dashed rule of printed paper. */
+  --rule: #c9c5b9;
+  --rule-2: #dedad0;
+
+  /* Faint machine annotation, the ghost cells of a display that never prints. */
+  --ghost: #d6d2c7;
+
+  --strip-w: 46rem;
+
+  --raise: 0 18px 44px -14px rgb(0 0 0 / 0.6), 0 2px 5px rgb(0 0 0 / 0.34);
+  --raise-sm: 0 6px 16px -8px rgb(0 0 0 / 0.5), 0 1px 2px rgb(0 0 0 / 0.3);
+  --lift-torn: 0 -14px 26px -14px rgb(0 0 0 / 0.28);
+  --recess: inset 0 2px 7px rgb(0 0 0 / 0.42), inset 0 -1px 0 rgb(255 255 255 / 0.07);
+
+  --ease: cubic-bezier(0.16, 1, 0.3, 1);
 }
+
+/* ---------- reset ---------- */
 
 *,
 *::before,
@@ -50,86 +68,105 @@
   box-sizing: border-box;
 }
 
+* {
+  margin: 0;
+}
+
 html {
-  scroll-behavior: smooth;
-  scroll-padding-top: 80px;
-  -webkit-font-smoothing: antialiased;
+  -webkit-text-size-adjust: 100%;
 }
 
 body {
-  font-family: var(--font-body);
+  background: var(--counter);
+  color: var(--paper);
+  font-family: var(--font-human), system-ui, sans-serif;
   font-size: 1rem;
   line-height: 1.6;
-  color: var(--ink);
-  background: var(--paper);
-  overflow-x: hidden;
+  font-synthesis-weight: none;
+  -webkit-font-smoothing: antialiased;
 }
 
-/* Grain sits above the flat cream as a fixed, non-interactive layer so it
-   never scrolls independently of the content behind it. Opacity is kept low
-   enough that the cream still reads as the base colour. */
-body::after {
-  content: "";
-  position: fixed;
-  inset: 0;
-  z-index: 1;
-  pointer-events: none;
-  opacity: 0.035;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23g)'/%3E%3C/svg%3E");
+img,
+svg {
+  display: block;
+  max-width: 100%;
 }
 
-/* Display type is set tight because Baloo 2 is wide at large sizes; body copy
-   gets `pretty` so it avoids single-word last lines. */
+button,
+input,
+select,
+textarea {
+  font: inherit;
+  color: inherit;
+}
+
 h1,
 h2,
 h3,
-.hero-title,
-.logo-word,
-.card-title {
+h4 {
+  font-family: var(--font-human), system-ui, sans-serif;
+  font-weight: 800;
+  font-stretch: 88%;
+  line-height: 0.98;
+  letter-spacing: -0.022em;
   text-wrap: balance;
-  letter-spacing: -0.015em;
 }
 
 p {
   text-wrap: pretty;
 }
 
-img {
-  display: block;
-  max-width: 100%;
-  height: auto;
-}
-
-/* A bare `1fr` track resolves to minmax(auto, 1fr), so its floor is the
-   item's min-content width. One text-heavy card is enough to push a track
-   past the viewport, and body overflow-x:hidden then clips it silently.
-   Letting the items reach 0 lets the tracks size from available space. */
-.tools-grid > *,
-.games-grid > *,
-.catalog-grid > *,
-.persona-grid > * {
-  min-width: 0;
-}
-
 a {
   color: inherit;
+  text-underline-offset: 3px;
+  text-decoration-thickness: 1px;
 }
 
-button {
-  font: inherit;
-  cursor: pointer;
-  border: none;
-  background: none;
-  color: inherit;
+/* ---------- the machine's voice, and the human's ---------- */
+
+.mono {
+  font-family: var(--font-machine), ui-monospace, monospace;
+  font-feature-settings: "tnum" 1;
 }
 
-textarea {
-  font: inherit;
-  resize: vertical;
+.tnum {
+  font-variant-numeric: tabular-nums;
 }
 
-.hidden {
-  display: none !important;
+/* ---------- browser surfaces, themed from this palette ---------- */
+
+::selection {
+  background: rgb(47 61 143 / 0.24);
+  color: var(--ink);
+}
+
+:root {
+  caret-color: var(--stamp);
+  accent-color: var(--stamp);
+}
+
+:focus-visible {
+  outline: 2px solid var(--stamp);
+  outline-offset: 2px;
+}
+
+::-webkit-scrollbar {
+  width: 14px;
+  height: 14px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--counter-2);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--counter-3);
+  border: 3px solid var(--counter-2);
+  border-radius: 0;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #4a4740;
 }
 
 .visually-hidden {
@@ -137,2348 +174,2249 @@ textarea {
   width: 1px;
   height: 1px;
   padding: 0;
-  margin: -1px;
   overflow: hidden;
-  clip: rect(0, 0, 0, 0);
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
   border: 0;
 }
 
 .skip-link {
-  position: absolute;
-  left: -9999px;
-  top: 0;
-  background: var(--accent);
+  position: fixed;
+  left: 12px;
+  top: -80px;
+  z-index: 200;
+  padding: 12px 20px;
+  background: var(--stamp);
   color: #fff;
-  padding: 8px 16px;
-  border-radius: var(--radius-pill);
   font-weight: 700;
-  z-index: 1000;
+  font-stretch: 88%;
+  text-decoration: none;
+  transition: top 0.2s var(--ease);
 }
 
 .skip-link:focus {
-  left: 16px;
-  top: 16px;
+  top: 12px;
 }
 
-/* ---------- buttons ---------- */
-.btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-family: var(--font-display);
-  font-weight: 700;
-  border-radius: var(--radius-pill);
-  transition:
-    background var(--transition-base),
-    transform 0.12s ease,
-    box-shadow var(--transition-base);
-  white-space: nowrap;
+/* ==========================================================================
+   THE SHELL - counter, strip, gutters
+   Three columns on a desktop: the machine on the left, the paper in the
+   middle, the human on the right. The strip is the only bright thing.
+   ========================================================================== */
+
+.shell {
+  min-height: 100dvh;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  /* The counter is a lit surface, not a void: one broad sheen falls across the
+     whole top of the laminate so the strip reads as paper lying on something. */
+  background:
+    radial-gradient(
+      140% 90% at 50% 0%,
+      rgb(255 255 255 / 0.09),
+      rgb(255 255 255 / 0.015) 42%,
+      rgb(255 255 255 / 0) 74%
+    ),
+    var(--counter);
 }
 
-.btn:active {
-  transform: translateY(1px) scale(0.98);
-}
+/* ---------- the strip ---------- */
 
-.btn:focus-visible {
-  outline: 3px solid var(--accent);
-  outline-offset: 3px;
-}
-
-.btn-primary {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  background: var(--accent);
-  color: #fff;
-  font-size: 1.05rem;
-  padding: 14px 32px;
-}
-
-.btn-primary:hover {
-  background: var(--accent-deep);
-  box-shadow: 0 6px 24px rgba(209, 47, 30, 0.28);
-}
-
-.btn-ghost {
-  background: transparent;
-  border: 2.5px solid var(--ink);
-  color: var(--ink);
-  font-size: 1.05rem;
-  padding: 12px 28px;
-}
-
-.btn-ghost:hover {
-  background: var(--ink);
-  color: var(--paper);
-}
-
-.btn-sm {
-  font-size: 0.88rem;
-  padding: 9px 22px;
-}
-
-.btn-lg {
-  font-size: 1.2rem;
-  padding: 18px 40px;
-}
-
-.link-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  font-family: var(--font-display);
-  font-weight: 700;
-  color: var(--accent);
-  font-size: 0.88rem;
-  padding: 6px 2px;
-  transition: color var(--transition-base);
-}
-
-.link-btn:hover {
-  color: var(--accent-deep);
-}
-
-.icon-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 40px;
-  height: 40px;
-  border-radius: var(--radius-pill);
-  transition: background var(--transition-base);
-  font-size: 1.15rem;
-  color: var(--ink);
-}
-
-.icon-btn:hover {
-  background: var(--line-light);
-}
-
-.icon-btn:focus-visible {
-  outline: 3px solid var(--accent);
-  outline-offset: 2px;
-}
-
-.chip {
-  display: inline-flex;
-  align-items: center;
-  font-family: var(--font-display);
-  font-weight: 600;
-  font-size: 0.82rem;
-  border-radius: var(--radius-pill);
-  padding: 6px 14px;
-  border: 2px solid var(--line);
+.strip {
+  grid-column: 1;
+  position: relative;
+  width: 100%;
+  max-width: var(--strip-w);
+  margin-inline: auto;
   background: var(--paper);
-  transition:
-    background var(--transition-base),
-    border-color var(--transition-base),
-    transform 0.12s ease;
+  color: var(--ink);
+  box-shadow: var(--raise);
+  /* The paper edge catches the counter's light. */
+  border-inline: 1px solid var(--paper-3);
+  padding-bottom: 2px;
 }
 
-.chip:hover {
-  border-color: var(--ink-2);
+@media (min-width: 1120px) {
+  .shell {
+    grid-template-columns: 16rem minmax(0, var(--strip-w)) 16rem;
+    justify-content: center;
+    column-gap: 2.75rem;
+    padding-inline: 1.5rem;
+  }
+
+  .strip {
+    grid-column: 2;
+    border-inline: 0;
+  }
 }
 
-.chip.is-active {
-  background: var(--ink);
-  color: var(--paper);
-  border-color: var(--ink);
-}
+/* ---------- gutters ---------- */
 
-.chip:focus-visible {
-  outline: 3px solid var(--accent);
-  outline-offset: 2px;
-}
+/* Tablet and small laptop: the strip stays the page, and the instruments become
+   static panels above and below it. Nothing is fixed, so nothing can overlap
+   the paper, and nothing is hidden behind a control. */
+@media (max-width: 1119px) {
+  .gutter {
+    align-content: center;
+    gap: 0.75rem;
+    padding: 0.7rem 1.25rem;
+    background: var(--counter-2);
+    box-shadow: inset 0 -1px 0 rgb(0 0 0 / 0.35);
+  }
 
-/* ---------- nav ---------- */
-.nav {
-  position: sticky;
-  top: 0;
-  z-index: 80;
-  background: rgba(255, 247, 232, 0.92);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border-bottom: 1px solid var(--line-light);
-  height: 64px;
-}
+  .gutter-left {
+    grid-row: 1;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+  }
 
-.nav-inner {
-  max-width: var(--max-w);
-  margin: 0 auto;
-  padding: 0 20px;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  /* Without this a flex item refuses to shrink below its content width, so a
-     long logo pushes .nav-actions past the viewport and body overflow-x:hidden
-     silently clips the burger button off-screen. */
-  min-width: 0;
-}
+  .gutter-right {
+    grid-row: 3;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    box-shadow: inset 0 1px 0 rgb(0 0 0 / 0.35);
+  }
 
-.logo {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  text-decoration: none;
-}
-
-.logo-mark {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--accent);
-  line-height: 0;
-}
-
-.logo-word {
-  font-family: var(--font-display);
-  font-weight: 800;
-  font-size: 1.05rem;
-  line-height: 1.1;
-}
-
-.logo-word span {
-  color: var(--accent);
-}
-
-.nav-links {
-  display: flex;
-  gap: 6px;
-  margin-left: auto;
-}
-
-.nav-links a {
-  font-family: var(--font-display);
-  font-weight: 600;
-  font-size: 0.88rem;
-  padding: 8px 14px;
-  border-radius: var(--radius-pill);
-  transition: background var(--transition-base);
-}
-
-.nav-links a:hover {
-  background: var(--line-light);
-}
-
-.nav-actions {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-left: 12px;
-}
-
-.nav-burger {
-  display: none;
-}
-
-.nav-burger:hover {
-  background: var(--line-light);
-}
-
-@media (max-width: 820px) {
-  .nav-links {
+  /* The prose about missing rooms is a desktop aside; the two numbers are the
+     machine's live state and stay at every width. */
+  .gutter-left .instrument-say,
+  .gutter-right .gutter-note {
     display: none;
   }
 
-  .nav-burger {
-    display: flex;
+  .gutter .instrument {
+    padding: 0;
+    background: none;
+    box-shadow: none;
   }
 
-  /* The logo, two icon buttons, the CTA and the burger together need ~490px,
-     which overflows a 375-390px phone. body overflow-x:hidden hides the scrollbar
-     but still clips the burger, leaving no way to open the menu. */
-  .nav-inner {
-    gap: 10px;
-    padding: 0 14px;
+  .gutter .instrument-label {
+    margin-bottom: 0.1rem;
+    font-size: 0.55rem;
   }
 
-  .nav-actions {
+  .gutter .instrument-value {
+    font-size: 0.85rem;
+  }
+
+  .gutter-left .key-block,
+  .gutter-right .key-block {
+    width: auto;
     margin-left: auto;
-    gap: 6px;
+    white-space: nowrap;
+  }
+}
+
+@media (min-width: 1120px) {
+  .gutter {
+    display: grid;
+    grid-column: 1;
+    align-content: start;
+    gap: 1.5rem;
+    position: sticky;
+    top: 0;
+    height: 100dvh;
+    padding-block: 2.25rem;
+    overflow-y: auto;
   }
 
-  .nav-fs {
-    display: none;
+  .gutter-right {
+    grid-column: 3;
+    grid-row: 1;
   }
+}
 
-  .logo-word {
-    font-size: 0.98rem;
-  }
-
-  .nav-links.open {
-    display: flex;
-    flex-direction: column;
-    position: absolute;
-    top: 64px;
+/* Phone: the machine's code and clock are always in reach at the top, and the
+   presenter controls always at the bottom. Both bars hold one row, so the
+   shell reserves their height and the paper is never covered. */
+@media (max-width: 640px) {
+  .gutter {
+    position: fixed;
     left: 0;
     right: 0;
-    background: var(--paper);
-    padding: 12px 20px;
-    border-bottom: 1px solid var(--line);
-    box-shadow: 0 12px 36px rgba(0, 0, 0, 0.08);
-    z-index: 90;
-    gap: 4px;
+    z-index: 40;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.45rem 0.7rem;
+    overflow-x: auto;
+    scrollbar-width: none;
   }
-}
 
-@media (max-width: 560px) {
-  /* Below this the logo plus two icon buttons and the burger still overflow a
-     360px phone. The nav CTA is dropped because the #mulai block sits further
-     down the same page, so no call to action is lost. */
-  .nav-cta {
+  .gutter::-webkit-scrollbar {
     display: none;
   }
 
-  .nav-links.open {
-    top: 56px;
-  }
-}
-
-/* ---------- hero ---------- */
-.hero {
-  position: relative;
-  overflow: hidden;
-  padding: 96px 20px 56px;
-}
-
-.hero-inner {
-  max-width: var(--max-w);
-  margin: 0 auto;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 40px;
-  align-items: center;
-}
-
-.hero-copy {
-  position: relative;
-  z-index: 2;
-}
-
-.eyebrow {
-  font-family: var(--font-display);
-  font-weight: 600;
-  font-size: 0.78rem;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--accent);
-  margin-bottom: 12px;
-}
-
-.hero h1 {
-  font-family: var(--font-display);
-  font-weight: 800;
-  font-size: clamp(2.2rem, 5.5vw, 3.5rem);
-  line-height: 1.08;
-  margin-bottom: 16px;
-}
-
-.hero h1 .hero-accent {
-  color: var(--accent);
-}
-
-.hero-sub {
-  font-size: 1.12rem;
-  color: var(--ink-2);
-  max-width: 500px;
-  margin-bottom: 28px;
-  line-height: 1.65;
-}
-
-.hero-cta {
-  display: flex;
-  gap: 14px;
-  flex-wrap: wrap;
-}
-
-.hero-visual {
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 420px;
-}
-
-.hero-stack {
-  position: relative;
-  width: 340px;
-  height: 300px;
-}
-
-.hero-card {
-  position: absolute;
-  width: 210px;
-  min-height: 170px;
-  background: #fff;
-  border: 2.5px solid var(--ink);
-  border-radius: var(--radius-card);
-  padding: 18px 18px 14px;
-  display: flex;
-  flex-direction: column;
-  box-shadow: 6px 8px 0 rgba(50, 40, 31, 0.14);
-}
-
-.hero-card-tag {
-  font-family: var(--font-display);
-  font-weight: 700;
-  font-size: 0.7rem;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  color: var(--accent);
-  margin-bottom: 8px;
-}
-
-.hero-card-q {
-  font-family: var(--font-display);
-  font-weight: 700;
-  font-size: 0.95rem;
-  line-height: 1.45;
-  flex: 1;
-}
-
-.hero-card-foot {
-  font-size: 0.72rem;
-  font-weight: 700;
-  color: var(--ink-3);
-  margin-top: 10px;
-}
-
-.hc-1 {
-  left: 0;
-  top: 18px;
-  transform: rotate(-7deg);
-  background: var(--tint);
-}
-
-.hc-2 {
-  left: 50%;
-  top: 0;
-  transform: translateX(-50%) rotate(1deg);
-  z-index: 2;
-}
-
-.hc-3 {
-  right: 0;
-  top: 26px;
-  transform: rotate(8deg);
-  background: var(--soft-red);
-}
-
-.hero-blob {
-  position: absolute;
-  width: 520px;
-  height: 520px;
-  background: radial-gradient(circle, rgba(255, 197, 61, 0.22) 0%, transparent 68%);
-  top: 50%;
-  right: 0;
-  transform: translate(22%, -46%);
-  pointer-events: none;
-  z-index: 0;
-}
-
-@media (max-width: 820px) {
-  .hero {
-    padding: 90px 20px 40px;
+  .gutter-left {
+    top: 0;
+    box-shadow: 0 4px 12px -6px rgb(0 0 0 / 0.6);
   }
 
-  .hero-inner {
-    grid-template-columns: 1fr;
-    gap: 32px;
-    text-align: center;
+  .gutter-right {
+    bottom: 0;
+    box-shadow: 0 -4px 12px -6px rgb(0 0 0 / 0.6);
   }
 
-  .hero-sub {
-    margin-left: auto;
-    margin-right: auto;
+  .gutter-left .instrument {
+    display: block;
+    padding: 0;
+    background: none;
+    box-shadow: none;
   }
 
-  .hero-cta {
-    justify-content: center;
+  .gutter-left .instrument-label {
+    margin-bottom: 0.1rem;
+    font-size: 0.55rem;
   }
 
-  .hero-visual {
-    min-height: 300px;
-  }
-
-  .hero-stack {
-    width: 280px;
-    height: 250px;
-  }
-
-  .hero-card {
-    width: 170px;
-    min-height: 140px;
-    padding: 14px 14px 10px;
-  }
-
-  .hero-card-q {
+  .gutter-left .instrument-value {
     font-size: 0.82rem;
   }
 
-  .hero-card-foot {
-    font-size: 0.72rem;
+  .gutter-left .key-block,
+  .gutter-right .key-block {
+    width: auto;
+    flex: 0 0 auto;
+    white-space: nowrap;
+    font-size: 0.85rem;
+    padding: 0.5rem 0.75rem;
   }
 
-  .hero-blob {
-    width: 320px;
-    height: 320px;
+  .shell {
+    padding-top: 3rem;
+    padding-bottom: 3.4rem;
+  }
+
+  /* On a phone the paper is the native format: edge to edge, no counter. */
+  .strip {
+    border-inline: 0;
   }
 }
 
-/* ---------- marquee ---------- */
-.marquee {
-  background: var(--tint);
-  color: var(--tint-ink);
-  padding: 12px 0;
-  overflow: hidden;
-  border-top: 2px solid var(--tint-deep);
-  border-bottom: 2px solid var(--tint-deep);
+/* ---------- instruments: a recessed window in the counter ---------- */
+
+.instrument {
+  background: var(--counter-2);
+  box-shadow: var(--recess);
+  padding: 0.85rem 0.95rem 0.95rem;
 }
 
-.marquee-track {
-  display: flex;
-  width: max-content;
-  animation: marquee-slide 26s linear infinite;
-}
-
-.marquee-track span {
-  font-family: var(--font-display);
-  font-weight: 700;
-  font-size: 0.88rem;
-  letter-spacing: 0.18em;
+.instrument-label {
+  font-family: var(--font-machine), ui-monospace, monospace;
+  font-size: 0.63rem;
+  font-weight: 500;
+  letter-spacing: 0.19em;
   text-transform: uppercase;
-  color: var(--ink);
-  padding-right: 12px;
+  color: var(--counter-ink-3);
+  margin-bottom: 0.35rem;
+}
+
+.instrument-value {
+  font-family: var(--font-machine), ui-monospace, monospace;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+  color: var(--paper);
+  letter-spacing: 0.04em;
+}
+
+/* The instrument label is the machine talking, so it is mono. The sentence under
+   it is the product talking, so it is not: the human/machine split holds even
+   inside a 16rem box. */
+.instrument-say {
+  font-size: 0.82rem;
+  line-height: 1.42;
+  color: var(--ink-2);
+  text-wrap: pretty;
+}
+
+.instrument-value.is-small {
+  font-size: 0.95rem;
+  font-weight: 500;
+  letter-spacing: 0;
+  color: var(--ink-2);
+  line-height: 1.35;
+}
+
+.gutter-note {
+  font-size: 0.8rem;
+  line-height: 1.45;
+  color: var(--ink-2);
+}
+
+/* The room code plate: the machine's own number, stamped. */
+.code-plate {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.code-plate-value {
+  font-family: var(--font-machine), ui-monospace, monospace;
+  font-weight: 700;
+  font-size: 1.35rem;
+  letter-spacing: 0.1em;
+  font-variant-numeric: tabular-nums;
+  color: var(--paper);
+}
+
+.code-plate-value.is-empty {
+  color: #56544d;
+}
+
+/* ---------- counter keys ---------- */
+
+.key {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  font-family: var(--font-human), system-ui, sans-serif;
+  font-weight: 700;
+  font-stretch: 88%;
+  font-size: 0.95rem;
+  letter-spacing: -0.01em;
+  border: 0;
+  border-radius: 3px;
+  padding: 0.7rem 1rem;
+  cursor: pointer;
+  background: var(--counter-3);
+  color: var(--paper);
+  box-shadow: inset 0 -2px 0 rgb(0 0 0 / 0.3), 0 1px 0 rgb(255 255 255 / 0.05);
+  transition: background 0.16s var(--ease), transform 0.1s var(--ease);
+}
+
+.key:hover {
+  background: #45423b;
+}
+
+.key:active {
+  transform: translateY(1px);
+  box-shadow: inset 0 0 0 0 rgb(0 0 0 / 0.3);
+}
+
+.key:disabled {
+  background: #2a2825;
+  color: #6b6862;
+  cursor: not-allowed;
+}
+
+.key-block {
+  width: 100%;
+}
+
+.key-stamp {
+  background: var(--stamp);
+  color: #fff;
+}
+
+.key-stamp:hover {
+  background: var(--stamp-2);
+}
+
+.key-flat {
+  background: none;
+  color: var(--counter-ink-3);
+  box-shadow: none;
+  padding-inline: 0.4rem;
+}
+
+.key-flat:hover {
+  background: none;
+  color: var(--paper);
+}
+
+/* ==========================================================================
+   PRINTED SURFACES
+   ========================================================================== */
+
+/* The first block carries the printed name, so it opens tighter than the blocks
+   below it: the vertical budget has to leave the running tool inside the first
+   viewport, which is the whole "understand then launch" promise. */
+.block {
+  padding: 2.25rem 2.25rem 2.5rem;
+}
+
+.block-lead {
+  padding-top: 1.6rem;
+  padding-bottom: 1.1rem;
+}
+
+.block + .block {
+  border-top: 1px dashed var(--rule);
+}
+
+@media (min-width: 720px) {
+  .block {
+    padding: 2.5rem 3.25rem 2.75rem;
+  }
+
+  .block-lead {
+    padding-top: 2rem;
+    padding-bottom: 1.15rem;
+  }
+}
+
+/* The dotted rule that separates printed sections. */
+.rule {
+  border: 0;
+  border-top: 1px dashed var(--rule);
+  margin-block: 1.75rem;
+}
+
+/* A dotted leader: the row of dots between a name and its price. */
+.leader {
+  flex: 1 1 auto;
+  min-width: 1.5rem;
+  align-self: flex-end;
+  margin-bottom: 0.34em;
+  border-bottom: 2px dotted var(--rule);
+}
+
+/* ---------- the printed name ---------- */
+
+.nameplate {
+  text-align: center;
+  padding-bottom: 0.25rem;
+}
+
+.nameplate-mark {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  margin: 0 auto 0.7rem;
+  background: var(--ink);
+  color: var(--paper);
+}
+
+.nameplate-name {
+  font-size: clamp(2.2rem, 6.2vw, 3.3rem);
+  font-weight: 900;
+  font-stretch: 92%;
+  letter-spacing: -0.03em;
+  line-height: 0.92;
+}
+
+.nameplate-strap {
+  font-family: var(--font-machine), ui-monospace, monospace;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--ink-2);
+  margin-top: 0.7rem;
+  max-width: 34ch;
+  margin-inline: auto;
+}
+
+/* ==========================================================================
+   THE MENU - numbered lines with dotted leaders, durations and a tier
+   The whole offer on one sheet: what this is, six activities, how long each
+   takes, how hard each one is. These lines ARE the primary action.
+   ========================================================================== */
+
+.menu-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.menu-title {
+  font-size: 1.05rem;
+  font-weight: 700;
+  font-stretch: 84%;
+  letter-spacing: -0.005em;
+}
+
+.menu-count {
+  font-family: var(--font-machine), ui-monospace, monospace;
+  font-size: 0.72rem;
+  color: var(--ink-3);
+  letter-spacing: 0.08em;
+}
+
+.menu-blurb {
+  color: var(--ink-2);
+  font-size: 0.88rem;
+  max-width: 54ch;
+}
+
+/* Two columns, the way an order ticket sets its items. This is a budget
+   decision, not a preference: a single column pushes the running tool below
+   the fold, which breaks the whole "understand then launch" promise. */
+.menu-cols {
+  display: grid;
+  gap: 0 1.75rem;
+}
+
+@media (min-width: 560px) {
+  .menu-cols {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.menu {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.menu-band {
+  display: flex;
+  align-items: baseline;
+  gap: 0.75rem;
+  margin: 0.95rem 0 0.15rem;
+}
+
+.menu-band:first-child {
+  margin-top: 0.4rem;
+}
+
+.menu-band-name {
+  font-family: var(--font-machine), ui-monospace, monospace;
+  font-size: 0.66rem;
+  font-weight: 700;
+  letter-spacing: 0.19em;
+  text-transform: uppercase;
+  color: var(--ink-3);
   white-space: nowrap;
 }
 
-@keyframes marquee-slide {
-  0% {
-    transform: translateX(0);
-  }
-
-  100% {
-    transform: translateX(-50%);
-  }
+.menu-band-line {
+  flex: 1;
+  border-top: 1px solid var(--rule-2);
 }
 
-/* ---------- section ---------- */
-.section {
-  padding: 80px 20px;
-  max-width: var(--max-w);
-  margin: 0 auto;
-}
-
-.section-head {
-  text-align: center;
-  max-width: 620px;
-  margin: 0 auto 48px;
-}
-
-.section-head h2 {
-  font-family: var(--font-display);
-  font-weight: 800;
-  font-size: clamp(1.6rem, 3.5vw, 2.2rem);
-  margin-bottom: 12px;
-}
-
-.section-sub {
-  font-size: 1.05rem;
-  color: var(--ink-2);
-  line-height: 1.65;
-}
-
-/* ---------- tools grid (bento) ---------- */
-.tools-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  grid-template-rows: auto auto;
-  gap: 18px;
-}
-
-.wheel-card {
-  grid-column: 1 / 3;
-  grid-row: 1 / 3;
-}
-
-.question-card {
-  grid-column: 3 / 5;
-  grid-row: 1 / 2;
-}
-
-.riddle-card {
-  grid-column: 3 / 4;
-  grid-row: 2 / 3;
-}
-
-.timer-card {
-  grid-column: 4 / 5;
-  grid-row: 2 / 3;
-}
-
-.tool-card {
-  background: #fff;
-  border: 1.5px solid var(--line);
-  border-radius: var(--radius-tool);
-  padding: 28px;
-  display: flex;
-  flex-direction: column;
-}
-
-.tool-head {
-  margin-bottom: 16px;
-}
-
-.tool-title {
-  font-family: var(--font-display);
-  font-weight: 800;
-  font-size: 1.18rem;
+/* 46px keeps every line above the 44px touch floor on a phone while letting the
+   whole menu and the running tool share one desktop viewport. */
+.menu-line {
   display: flex;
   align-items: center;
-  gap: 8px;
-  margin-bottom: 4px;
+  gap: 0.75rem;
+  width: 100%;
+  min-height: 46px;
+  padding: 0.5rem 0.25rem;
+  background: none;
+  border: 0;
+  border-bottom: 1px solid var(--rule-2);
+  text-align: left;
+  cursor: pointer;
+  color: var(--ink);
+  transition: background 0.16s var(--ease);
 }
 
-/* The icon is a fixed-size flex item; without this a long title on a narrow
-   card squeezes the svg to zero width instead of wrapping the text. */
-.tool-title svg {
+.menu-line:hover {
+  background: var(--paper-2);
+}
+
+.menu-line.is-active {
+  background: var(--paper-3);
+}
+
+.menu-line-num {
+  font-family: var(--font-machine), ui-monospace, monospace;
+  font-size: 0.92rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-3);
   flex: 0 0 auto;
 }
 
-.tool-tag {
-  font-size: 0.88rem;
-  color: var(--ink-2);
+.menu-line.is-active .menu-line-num {
+  color: var(--stamp);
 }
 
-/* wheel */
-.wheel-stage {
+.menu-line-body {
   display: flex;
-  gap: 28px;
-  flex: 1;
-  align-items: center;
+  align-items: baseline;
+  flex: 1 1 auto;
+  min-width: 0;
+  gap: 0.5rem;
 }
 
-.wheel-wrap {
+.menu-line-name {
+  font-weight: 700;
+  font-stretch: 84%;
+  font-size: 1.08rem;
+  letter-spacing: -0.012em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.menu-line-dur {
+  font-family: var(--font-machine), ui-monospace, monospace;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--ink-2);
+  flex: 0 0 auto;
+  letter-spacing: 0.04em;
+}
+
+.menu-line-go {
+  flex: 0 0 auto;
+  color: var(--ink-3);
+  transition: color 0.16s var(--ease), transform 0.16s var(--ease);
+}
+
+.menu-line:hover .menu-line-go {
+  color: var(--stamp);
+  transform: translateX(3px);
+}
+
+/* ==========================================================================
+   THE TORN SEGMENT - what a played activity leaves behind
+   ========================================================================== */
+
+.segments {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.segment {
   position: relative;
-  width: 280px;
-  height: 280px;
-  flex-shrink: 0;
+  background: var(--paper);
+  padding: 1.4rem 1.5rem 1.5rem;
+  box-shadow: var(--lift-torn), 0 1px 0 var(--rule-2);
 }
 
-.wheel {
-  display: block;
-  width: 280px;
-  height: 280px;
-  border-radius: 50%;
-  border: 6px solid var(--paper);
-  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.1);
+.segment.is-current {
+  box-shadow: 0 0 0 2px var(--stamp), 0 1px 0 var(--rule-2);
 }
 
-.wheel-spin {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  width: 64px;
-  height: 64px;
-  border-radius: 50%;
-  z-index: 5;
-  font-size: 0.82rem;
+.segment-head {
+  display: flex;
+  align-items: baseline;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.9rem;
+}
+
+.segment-num {
+  font-family: var(--font-machine), ui-monospace, monospace;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--stamp);
+  letter-spacing: 0.06em;
+}
+
+.segment-name {
+  font-weight: 700;
+  font-stretch: 84%;
+  font-size: 1.02rem;
+}
+
+.segment-time {
+  margin-left: auto;
+  font-family: var(--font-machine), ui-monospace, monospace;
+  font-size: 0.74rem;
+  color: var(--ink-3);
+  font-variant-numeric: tabular-nums;
+}
+
+.segment-tier {
+  font-family: var(--font-machine), ui-monospace, monospace;
+  font-size: 0.66rem;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  color: var(--ink-2);
+  box-shadow: inset 0 0 0 1.5px var(--rule);
+  border-radius: 2px;
+  padding: 0.15rem 0.45rem 0.11rem;
+}
+
+/* ==========================================================================
+   THE HISTORY - what the roll has already printed
+   ========================================================================== */
+
+.block-history {
+  padding: 0 2.25rem 2rem;
+}
+
+@media (min-width: 720px) {
+  .block-history {
+    padding: 0 3.25rem 2.25rem;
+  }
+}
+
+.history {
+  list-style: none;
   padding: 0;
+  margin: 0;
+}
+
+.history-row {
+  display: flex;
+  align-items: baseline;
+  gap: 0.7rem;
+  padding: 0.6rem 0;
+  border-bottom: 1px dotted var(--rule);
+  font-size: 0.92rem;
+}
+
+.history-row:last-child {
+  border-bottom: 0;
+}
+
+.history-num {
+  font-family: var(--font-machine), ui-monospace, monospace;
+  font-weight: 700;
+  font-size: 0.82rem;
+  color: var(--ink-3);
+  flex: 0 0 auto;
+}
+
+.history-name {
+  font-weight: 700;
+  font-stretch: 84%;
+  flex: 0 0 auto;
+}
+
+.history-at {
+  font-size: 0.78rem;
+  color: var(--ink-3);
+  font-variant-numeric: tabular-nums;
+  flex: 0 0 auto;
+}
+
+/* The one authored moment: the paper tears and the next thing feeds down. */
+.torn-feed {
+  animation: torn-feed 0.42s var(--ease) both;
+}
+
+@keyframes torn-feed {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+    clip-path: inset(0 0 100% 0);
+  }
+  60% {
+    opacity: 1;
+  }
+  to {
+    opacity: 1;
+    transform: none;
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .torn-feed {
+    animation: none;
+  }
+
+  .print-sweep {
+    animation: none !important;
+  }
+}
+
+/* ==========================================================================
+   THE MACHINE WRITING
+   A thermal head crossing the line: a bright rule travels, and the print
+   behind it is already there.
+   ========================================================================== */
+
+.print-sweep {
+  position: relative;
+  animation: print-sweep 0.5s var(--ease) both;
+}
+
+.print-sweep::after {
+  content: "";
+  position: absolute;
+  inset: -0.1em -0.35em;
+  background: linear-gradient(
+    90deg,
+    rgb(47 61 143 / 0) 0%,
+    rgb(47 61 143 / 0.16) 78%,
+    rgb(47 61 143 / 0.5) 100%
+  );
+  animation: print-head 0.5s var(--ease) both;
+  pointer-events: none;
+}
+
+@keyframes print-sweep {
+  from {
+    clip-path: inset(0 100% 0 0);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+@keyframes print-head {
+  from {
+    opacity: 1;
+    transform: translateX(6%);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(2%);
+  }
+}
+
+/* ==========================================================================
+   A TOOL - the activity inside a segment. No card, no frame: the strip is
+   already the surface, and a box inside a box is the thing this world refuses.
+   ========================================================================== */
+
+.tool {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.print-out-idle {
+  color: var(--ink-3);
+  font-stretch: 84%;
+  font-weight: 700;
+}
+
+/* ---------- the wheel ---------- */
+
+.wheel-bay {
+  display: grid;
+  gap: 1.75rem;
+  align-items: start;
+  margin-top: 1.25rem;
+}
+
+@media (min-width: 620px) {
+  .wheel-bay {
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: 2.25rem;
+  }
+}
+
+/* The disc is an object lying on the paper, so it is raised. */
+.wheel-plate {
+  position: relative;
+  width: min(300px, 78vw);
+  aspect-ratio: 1;
+  display: grid;
+  place-items: center;
+  box-shadow: var(--raise-sm);
+}
+
+.wheel-disc {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
 }
 
 .wheel-pointer {
   position: absolute;
-  top: -6px;
+  top: -9px;
   left: 50%;
   transform: translateX(-50%);
   width: 0;
   height: 0;
-  border-left: 10px solid transparent;
-  border-right: 10px solid transparent;
-  border-top: 18px solid var(--accent);
-  z-index: 6;
-  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.18));
+  border-left: 14px solid transparent;
+  border-right: 14px solid transparent;
+  border-top: 26px solid var(--stamp);
+  z-index: 2;
+}
+
+/* The hub is a keycap pressed into the disc's blank centre. */
+.wheel-hub {
+  position: absolute;
+  z-index: 3;
+  width: 96px;
+  height: 96px;
+  border: 0;
+  border-radius: 50%;
+  background: var(--paper);
+  color: var(--ink);
+  box-shadow: inset 0 0 0 2px var(--ink);
+  font-family: var(--font-machine), ui-monospace, monospace;
+  font-weight: 700;
+  font-size: 0.86rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background 0.16s var(--ease), color 0.16s var(--ease);
+}
+
+.wheel-hub:hover:not(:disabled) {
+  background: var(--ink);
+  color: var(--paper);
+}
+
+.wheel-hub:disabled {
+  color: var(--ink-3);
+  box-shadow: inset 0 0 0 2px var(--rule);
+  cursor: progress;
 }
 
 .wheel-side {
-  flex: 1;
+  display: grid;
+  gap: 0.75rem;
+  align-content: start;
+  min-width: 0;
 }
 
-.wheel-result {
-  font-family: var(--font-display);
-  font-weight: 700;
-  font-size: 1.1rem;
-  margin-bottom: 14px;
-  min-height: 1.5em;
+.wheel-edit {
+  display: grid;
+  gap: 0.45rem;
+  justify-items: start;
+  padding-top: 0.5rem;
 }
 
-.wheel-edit textarea {
-  width: 100%;
-  border: 2px solid var(--line);
-  border-radius: var(--radius-input);
-  padding: 10px 14px;
-  font-size: 0.88rem;
-  line-height: 1.5;
-  margin-bottom: 10px;
-  background: var(--paper);
-}
+/* ---------- printed question / clue rows ---------- */
 
-.wheel-edit textarea:focus {
-  outline: none;
-  border-color: var(--accent);
-}
-
-@media (max-width: 900px) {
-  .wheel-stage {
-    flex-direction: column;
-    align-items: center;
-  }
-}
-
-/* question generator */
 .q-cats {
   display: flex;
-  gap: 8px;
   flex-wrap: wrap;
-  margin-bottom: 20px;
+  gap: 0.4rem;
+  margin-top: 0.85rem;
 }
 
-.q-text {
-  font-family: var(--font-display);
-  font-weight: 700;
-  font-size: 1.15rem;
-  line-height: 1.5;
-  min-height: 2.8em;
-  margin-bottom: 18px;
-  color: var(--ink);
-}
-
-.riddle-clues {
-  list-style: none;
-  margin: 0 0 14px;
-  padding: 0;
-  display: grid;
-  gap: 8px;
-}
-
-.riddle-clues li {
+.clue {
   display: flex;
-  align-items: flex-start;
-  gap: 10px;
-  padding: 11px 13px;
-  border-radius: var(--radius-sm);
-  background: var(--surface-sunken);
-  border: 1px solid var(--line-light);
-  font-size: 0.95rem;
-  line-height: 1.45;
-  text-align: left;
+  align-items: baseline;
+  gap: 0.85rem;
+  padding: 0.7rem 0;
+  border-bottom: 1px dotted var(--rule);
+  font-size: 1rem;
+  line-height: 1.4;
 }
 
-.riddle-clue-num {
+.clue-num {
+  font-family: var(--font-machine), ui-monospace, monospace;
+  font-weight: 700;
+  font-size: 0.85rem;
+  color: var(--ink-3);
   flex: 0 0 auto;
+}
+
+/* The answer, printed under a torn flap. */
+.answer-flap {
+  margin-top: 1.1rem;
+  padding: 1rem 1.15rem 1.1rem;
+  background: var(--paper-2);
+  box-shadow: inset 0 0 0 1.5px var(--rule);
+}
+
+.answer-flap-value {
+  font-size: clamp(1.4rem, 3.6vw, 2rem);
+  font-weight: 800;
+  font-stretch: 78%;
+  letter-spacing: -0.024em;
+  margin-top: 0.3rem;
+}
+
+/* ---------- the timer, recessed into the counter ---------- */
+
+.timer-set {
   display: grid;
-  place-items: center;
-  width: 22px;
-  height: 22px;
-  margin-top: 1px;
-  border-radius: var(--radius-pill);
-  background: var(--accent);
-  color: #fff;
-  font-family: var(--font-display);
-  font-size: 0.72rem;
-  font-weight: 800;
-  line-height: 1;
+  gap: 0.6rem;
 }
 
-.riddle-answer {
-  font-family: var(--font-display);
-  font-weight: 700;
-  font-size: 1.1rem;
-  background: var(--accent);
+.timer-readout {
+  margin-top: 1rem;
+}
+
+.window-value.is-running {
   color: var(--paper);
-  padding: 10px 16px;
-  border-radius: var(--radius-pill);
-  display: inline-block;
-  margin-bottom: 12px;
-}
-
-.riddle-actions {
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-  margin-top: auto;
-}
-
-/* timer */
-.timer-main {
-  display: flex;
-  justify-content: center;
-  margin-bottom: 18px;
-}
-
-.timer-ring-wrap {
-  position: relative;
-  width: 120px;
-  height: 120px;
-}
-
-.timer-ring {
-  width: 100%;
-  height: 100%;
-}
-
-.ring-track {
-  fill: none;
-  stroke: var(--line-light);
-  stroke-width: 7;
-}
-
-.ring-fill {
-  fill: none;
-  stroke: var(--accent);
-  stroke-width: 7;
-  stroke-linecap: round;
-  stroke-dasharray: 326.7;
-  stroke-dashoffset: 0;
-  transform: rotate(-90deg);
-  transform-origin: center;
-  transition: stroke-dashoffset 0.18s linear;
-}
-
-.timer-time {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  font-family: var(--font-display);
-  font-weight: 800;
-  font-size: 1.6rem;
-  color: var(--ink);
-}
-
-.timer-presets {
-  display: flex;
-  gap: 8px;
-  justify-content: center;
-  flex-wrap: wrap;
-  margin-bottom: 16px;
-}
-
-.timer-actions {
-  display: flex;
-  gap: 10px;
-  justify-content: center;
-  margin-top: auto;
 }
 
 .sound-board {
   display: flex;
-  gap: 6px;
-  justify-content: center;
   flex-wrap: wrap;
-  margin-top: 16px;
+  gap: 0.4rem;
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px dashed var(--rule);
 }
 
-.sound-board .chip {
-  gap: 5px;
-  font-size: 0.76rem;
-  padding: 5px 12px;
-}
+/* ---------- the click target, a counter window you hit ---------- */
 
-.timer-ring-wrap.flash {
-  animation: ring-flash 0.4s ease 3;
-}
-
-@keyframes ring-flash {
-  0%,
-  100% {
-    filter: none;
-  }
-
-  50% {
-    filter: drop-shadow(0 0 16px rgba(209, 47, 30, 0.8)) brightness(1.1);
-  }
-}
-
-/* ---------- games grid ---------- */
-.games-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 20px;
-}
-
-.click-card {
-  background: var(--soft-red);
-  border: 1.5px solid #f5bfb6;
-  border-radius: var(--radius-tool);
-  padding: 28px;
-  display: flex;
-  flex-direction: column;
+.click-bay {
+  margin-top: 1rem;
 }
 
 .click-target {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-family: var(--font-display);
-  font-weight: 800;
-  font-size: 1.2rem;
-  color: #fff;
-  background: var(--accent);
-  border-radius: var(--radius-tool);
-  padding: 32px 20px;
-  margin: 16px 0;
-  transition:
-    background var(--transition-base),
-    transform 0.08s ease;
+  width: 100%;
+  min-height: 190px;
+  border: 0;
+  background: var(--counter);
+  color: var(--paper);
+  box-shadow: var(--recess);
+  cursor: pointer;
+  font-family: var(--font-machine), ui-monospace, monospace;
+  font-weight: 700;
+  font-size: 1.1rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
   user-select: none;
-  min-height: 110px;
+  touch-action: manipulation;
+  transition: background 0.12s var(--ease);
 }
 
-.click-target:hover {
-  background: var(--accent-deep);
+.click-target:hover:not(:disabled) {
+  background: var(--counter-3);
 }
 
-.click-target:active {
-  transform: scale(0.97);
+.click-target:active:not(:disabled) {
+  background: var(--stamp);
 }
 
-.click-target.done {
-  opacity: 0.75;
+.click-target:disabled {
+  color: var(--ink-3);
+  cursor: default;
 }
 
 .click-stats {
   display: flex;
-  justify-content: space-between;
-  font-family: var(--font-display);
-  font-weight: 700;
-  font-size: 1.15rem;
-  margin-bottom: 14px;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  margin-top: 0.9rem;
 }
 
-.click-result {
-  font-family: var(--font-display);
-  font-weight: 700;
-  font-size: 1.15rem;
-  text-align: center;
-  margin-bottom: 14px;
+.click-stat {
+  display: grid;
+  gap: 0.15rem;
 }
 
-.quiz-card {
-  background: #fff;
-  border: 1.5px solid var(--line);
+.click-stat-value {
+  font-family: var(--font-machine), ui-monospace, monospace;
+  font-weight: 700;
+  font-size: 1.75rem;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+  line-height: 1;
 }
+
+.click-stat-label {
+  font-family: var(--font-machine), ui-monospace, monospace;
+  font-size: 0.64rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+/* ---------- quiz ---------- */
 
 .quiz-q {
-  font-family: var(--font-display);
+  font-size: clamp(1.15rem, 2.4vw, 1.5rem);
   font-weight: 700;
-  font-size: 1.05rem;
-  line-height: 1.55;
-  margin-bottom: 18px;
-}
-
-.quiz-opts {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
-  margin-bottom: 18px;
-}
-
-.quiz-opt {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  font-family: var(--font-display);
-  font-weight: 700;
-  font-size: 0.92rem;
-  background: var(--paper);
-  border: 2.5px solid var(--line);
-  border-radius: var(--radius-input);
-  padding: 14px 10px;
-  transition:
-    background var(--transition-base),
-    border-color var(--transition-base),
-    transform 0.1s ease;
-  min-height: 56px;
-}
-
-.quiz-opt:hover:not(.locked) {
-  border-color: var(--ink-2);
-  transform: translateY(-1px);
-}
-
-.quiz-opt:active:not(.locked) {
-  transform: scale(0.97);
-}
-
-.quiz-opt.is-correct {
-  background: var(--ok-bg);
-  border-color: var(--ok);
-  color: var(--ok-ink);
-}
-
-.quiz-opt.is-wrong {
-  background: var(--soft-red);
-  border-color: var(--soft-red-2);
-  animation: shake 0.45s ease;
-}
-
-.quiz-opt.locked {
-  pointer-events: none;
-  opacity: 0.65;
-}
-
-.quiz-opt.is-correct.locked {
-  opacity: 1;
+  font-stretch: 84%;
+  line-height: 1.24;
+  letter-spacing: -0.016em;
+  margin-top: 0.5rem;
 }
 
 .quiz-feedback {
-  font-family: var(--font-display);
-  font-weight: 700;
-  min-height: 1.4em;
-  text-align: center;
-  margin-bottom: 14px;
-}
-
-@keyframes shake {
-  0%,
-  100% {
-    transform: translateX(0);
-  }
-
-  20% {
-    transform: translateX(-6px);
-  }
-
-  40% {
-    transform: translateX(6px);
-  }
-
-  60% {
-    transform: translateX(-4px);
-  }
-
-  80% {
-    transform: translateX(4px);
-  }
-}
-
-@media (max-width: 700px) {
-  .games-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .quiz-opts {
-    grid-template-columns: 1fr;
-  }
-}
-
-/* ---------- catalog ---------- */
-.filters {
-  margin-bottom: 24px;
-  background: #fff;
-  border: 1.5px solid var(--line);
-  border-radius: var(--radius-tool);
-  padding: 20px 24px;
-}
-
-.filter-row {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  flex-wrap: wrap;
-  margin-bottom: 10px;
-}
-
-.filter-row:last-child {
-  margin-bottom: 0;
-}
-
-.filter-label {
-  font-family: var(--font-display);
-  font-weight: 700;
-  font-size: 0.78rem;
-  text-transform: uppercase;
-  letter-spacing: 0.12em;
+  min-height: 1.5em;
+  margin-top: 0.9rem;
+  font-size: 0.94rem;
   color: var(--ink-2);
-  width: 56px;
-  flex-shrink: 0;
 }
 
-.filter-opts {
-  display: flex;
-  gap: 6px;
-  flex-wrap: wrap;
-}
+/* ==========================================================================
+   THE TEAR
+   ========================================================================== */
 
-.game-count {
-  font-family: var(--font-display);
-  font-weight: 700;
-  font-size: 0.88rem;
-  color: var(--ink-2);
-  margin-bottom: 20px;
-}
-
-.catalog-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 20px;
-}
-
-.catalog-card {
-  background: #fff;
-  border: 1.5px solid var(--line);
-  border-radius: var(--radius-card);
-  overflow: hidden;
-  transition:
-    transform var(--transition-base),
-    box-shadow var(--transition-base),
-    opacity 0.35s ease;
-}
-
-.catalog-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.08);
-}
-
-.catalog-card.hide-card {
-  opacity: 0;
-  transform: scale(0.96);
-  pointer-events: none;
-}
-
-.card-photo {
-  width: 100%;
-  aspect-ratio: 16 / 9;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--accent);
+.tear {
+  position: relative;
   line-height: 0;
 }
 
-.catalog-note {
-  font-size: 0.88rem;
-  color: var(--ink-2);
-  margin: -8px 0 20px;
+.tear-edge {
+  display: block;
+  width: 100%;
+  height: 5px;
 }
 
-.card-body {
-  padding: 20px;
+.tear-top {
+  /* A segment torn off above shows its head torn upward into the counter. */
+  margin-top: -1px;
 }
 
-.card-title {
-  font-family: var(--font-display);
-  font-weight: 800;
-  font-size: 1.08rem;
-  margin-bottom: 4px;
-  display: flex;
-  align-items: center;
-  gap: 6px;
+.tear-top .tear-edge {
+  transform: scaleY(-1);
 }
 
-.card-meta {
-  font-size: 0.78rem;
+.tear-label {
+  position: absolute;
+  left: 50%;
+  bottom: 9px;
+  transform: translateX(-50%);
+  font-size: 0.6rem;
+  font-weight: 500;
+  letter-spacing: 0.24em;
   color: var(--ink-3);
-  margin-bottom: 8px;
-  font-weight: 600;
+  background: var(--paper);
+  padding-inline: 0.6rem;
+  line-height: 1;
 }
 
-.card-desc {
-  font-size: 0.92rem;
-  color: var(--ink-2);
-  line-height: 1.55;
-  margin-bottom: 8px;
+/* ==========================================================================
+   PRINTED OUTPUT - the biggest type on the page, legible from the back row
+   ========================================================================== */
+
+.print-out {
+  font-size: clamp(1.75rem, 5.2vw, 3.1rem);
+  font-weight: 800;
+  font-stretch: 76%;
+  letter-spacing: -0.028em;
+  line-height: 1.02;
+  margin-block: 0.35rem 0;
+  text-wrap: balance;
 }
 
-.card-need {
-  font-size: 0.82rem;
+.print-out-mono {
+  font-family: var(--font-machine), ui-monospace, monospace;
+  font-size: clamp(1.35rem, 4.2vw, 2.5rem);
+  font-weight: 500;
+  line-height: 1.14;
+  letter-spacing: -0.01em;
+  text-wrap: balance;
+}
+
+.print-caption {
+  font-family: var(--font-machine), ui-monospace, monospace;
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+/* A printed line waiting for the machine to fill it. */
+.print-blank {
+  display: block;
+  height: 1px;
+  margin-top: 0.5rem;
+  border-bottom: 1px solid var(--rule);
+}
+
+/* ---------- the rubber stamp ---------- */
+
+.stamp-mark {
+  display: inline-block;
+  font-family: var(--font-machine), ui-monospace, monospace;
+  font-weight: 700;
+  font-size: 0.78rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--stamp);
+  border: 2px solid var(--stamp);
+  border-radius: 2px;
+  padding: 0.3rem 0.7rem 0.26rem;
+  transform: rotate(-4.5deg);
+  animation: stamp-land 0.34s var(--ease) both;
+}
+
+@keyframes stamp-land {
+  from {
+    opacity: 0;
+    transform: rotate(-4.5deg) scale(1.5);
+  }
+  to {
+    opacity: 1;
+    transform: rotate(-4.5deg) scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .stamp-mark {
+    animation: none;
+  }
+}
+
+/* ==========================================================================
+   CONTROLS, printed
+   ========================================================================== */
+
+.keyrow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 1.25rem;
+}
+
+/* A key printed on paper: a flat cap with a rule under it, not a pill. */
+.pkey {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  min-height: 46px;
+  font-family: var(--font-machine), ui-monospace, monospace;
+  font-weight: 700;
+  font-size: 0.86rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  border: 0;
+  border-radius: 3px;
+  padding: 0.65rem 1.1rem;
+  cursor: pointer;
+  background: var(--ink);
+  color: var(--paper);
+  transition: background 0.16s var(--ease), transform 0.1s var(--ease);
+}
+
+.pkey:hover {
+  background: #403e35;
+}
+
+.pkey:active {
+  transform: translateY(1px);
+}
+
+.pkey:disabled {
+  background: var(--paper-3);
+  color: var(--ink-3);
+  cursor: not-allowed;
+}
+
+.pkey-stamp {
+  background: var(--stamp);
+  color: #fff;
+}
+
+.pkey-stamp:hover {
+  background: var(--stamp-2);
+}
+
+.pkey-quiet {
+  background: none;
+  color: var(--ink);
+  box-shadow: inset 0 0 0 1.5px var(--rule);
+}
+
+.pkey-quiet:hover {
+  background: var(--paper-2);
+  box-shadow: inset 0 0 0 1.5px var(--ink-2);
+}
+
+.pkey-sm {
+  min-height: 38px;
+  font-size: 0.76rem;
+  padding: 0.5rem 0.8rem;
+}
+
+/* A filter chip, printed as a boxed cell. */
+.fchip {
+  font-family: var(--font-machine), ui-monospace, monospace;
+  font-weight: 500;
+  font-size: 0.8rem;
+  border: 0;
+  border-radius: 2px;
+  padding: 0.45rem 0.8rem;
+  background: none;
+  box-shadow: inset 0 0 0 1.5px var(--rule);
   color: var(--ink-2);
+  cursor: pointer;
+  transition: box-shadow 0.16s var(--ease), color 0.16s var(--ease),
+    background 0.16s var(--ease);
+}
+
+.fchip:hover {
+  color: var(--ink);
+  box-shadow: inset 0 0 0 1.5px var(--ink-2);
+}
+
+.fchip.is-on {
+  background: var(--ink);
+  color: var(--paper);
+  box-shadow: inset 0 0 0 1.5px var(--ink);
+}
+
+/* ---------- printed inputs ---------- */
+
+.print-input,
+.print-select,
+.print-textarea {
+  width: 100%;
+  border: 0;
+  border-radius: 2px;
+  background: var(--paper-2);
+  box-shadow: inset 0 0 0 1.5px var(--rule);
+  padding: 0.7rem 0.85rem;
+  font-family: var(--font-machine), ui-monospace, monospace;
+  font-size: 0.95rem;
+  color: var(--ink);
+  transition: box-shadow 0.16s var(--ease);
+}
+
+.print-input:focus,
+.print-select:focus,
+.print-textarea:focus {
+  outline: none;
+  box-shadow: inset 0 0 0 2px var(--stamp);
+}
+
+.print-textarea {
+  font-family: var(--font-human), system-ui, sans-serif;
+  resize: vertical;
+  min-height: 110px;
   line-height: 1.5;
 }
 
-.game-empty {
-  font-family: var(--font-display);
-  font-weight: 700;
-  font-size: 1rem;
-  color: var(--ink-3);
-  text-align: center;
-  padding: 48px 20px;
-  background: var(--paper-2);
-  border-radius: var(--radius-tool);
-  border: 2px dashed var(--line);
-}
+/* ---------- printed rows: the answer-sheet grammar ---------- */
 
-@media (max-width: 900px) {
-  .catalog-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-@media (max-width: 580px) {
-  .catalog-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .filters {
-    padding: 16px;
-  }
-
-  .filter-label {
-    width: 100%;
-    margin-bottom: -4px;
-  }
-}
-
-/* ---------- personas ---------- */
-.persona-grid {
+.prows {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 18px;
+  gap: 0.55rem;
 }
 
-.persona {
-  background: #fff;
-  border: 1.5px solid var(--line);
-  border-radius: var(--radius-card);
-  padding: 28px 22px;
-  text-align: center;
-  transition:
-    transform var(--transition-wobble),
-    box-shadow var(--transition-base);
-}
-
-.persona:hover {
-  transform: translateY(-4px) rotate(-2deg);
-  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.08);
-}
-
-.persona-icon {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 62px;
-  height: 62px;
-  margin-bottom: 14px;
-  border-radius: var(--radius-sm);
-  background: var(--soft-red);
-  color: var(--accent);
-  line-height: 0;
-}
-
-.persona h3 {
-  font-family: var(--font-display);
-  font-weight: 800;
-  font-size: 1.05rem;
-  margin-bottom: 6px;
-}
-
-.persona p {
-  font-size: 0.92rem;
-  color: var(--ink-2);
-  line-height: 1.55;
-}
-
-@media (max-width: 820px) {
-  .persona-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-@media (max-width: 500px) {
-  .persona-grid {
-    grid-template-columns: 1fr;
-  }
-}
-
-/* ---------- presenter strip ---------- */
-.presenter {
-  margin: 0 20px 80px;
-  max-width: var(--max-w);
-  margin-left: auto;
-  margin-right: auto;
-  background: var(--tint);
-  border-radius: var(--radius-lg);
-  padding: 32px 36px;
+.prow {
   display: flex;
   align-items: center;
-  gap: 24px;
+  gap: 0.8rem;
+  width: 100%;
+  text-align: left;
+  border: 0;
+  border-radius: 2px;
+  padding: 0.85rem 1rem;
+  background: var(--paper-2);
+  color: var(--ink);
+  cursor: pointer;
+  font-size: 1rem;
+  line-height: 1.4;
+  transition: background 0.16s var(--ease);
 }
 
-.presenter-bubble {
-  font-size: 2.8rem;
-  flex-shrink: 0;
+.prow:hover {
+  background: var(--paper-3);
 }
 
-.presenter-copy {
-  flex: 1;
+.prow-key {
+  font-family: var(--font-machine), ui-monospace, monospace;
+  font-weight: 700;
+  font-size: 0.95rem;
+  flex: 0 0 auto;
+  width: 1.6rem;
+  height: 1.6rem;
+  display: grid;
+  place-items: center;
+  box-shadow: inset 0 0 0 1.5px var(--ink-2);
+  border-radius: 2px;
 }
 
-.presenter-copy h2 {
-  font-family: var(--font-display);
-  font-weight: 800;
-  font-size: 1.3rem;
-  margin-bottom: 4px;
+.prow.is-correct {
+  background: var(--stamp);
+  color: #fff;
 }
 
-.presenter-copy p {
-  font-size: 0.92rem;
-  color: var(--ink-2);
-  line-height: 1.55;
+.prow.is-correct .prow-key {
+  box-shadow: inset 0 0 0 1.5px rgb(255 255 255 / 0.7);
 }
 
-@media (max-width: 640px) {
-  .presenter {
-    flex-direction: column;
-    text-align: center;
-    padding: 28px 24px;
-  }
+.prow.is-wrong {
+  background: var(--paper-3);
+  box-shadow: inset 0 0 0 2px var(--ink);
 }
 
-/* ---------- CTA block (ink) ---------- */
-.cta-block {
-  background: var(--ink);
-  padding: 80px 20px;
+.prow.is-locked {
+  cursor: default;
 }
 
-.cta-inner {
-  max-width: 560px;
-  margin: 0 auto;
-  text-align: center;
+/* ---------- a numbered list of facts, dotted leaders ---------- */
+
+.facts {
+  display: grid;
+  gap: 0.3rem;
 }
 
-.cta-icon {
-  display: inline-flex;
-  margin-bottom: 18px;
-  color: var(--soft-red-2);
-  line-height: 0;
-}
-
-.cta-block h2 {
-  font-family: var(--font-display);
-  font-weight: 800;
-  font-size: clamp(1.6rem, 4vw, 2.1rem);
-  color: var(--paper);
-  margin-bottom: 28px;
-  line-height: 1.2;
-}
-
-.cta-block .btn-primary {
-  background: var(--paper);
-  color: var(--accent-deep);
-}
-
-.cta-block .btn-primary:hover {
-  background: var(--soft-red);
-  box-shadow: 0 6px 24px rgba(209, 47, 30, 0.28);
-}
-
-.cta-note {
-  color: var(--paper-2);
-  font-size: 0.82rem;
-  margin-top: 14px;
-  font-weight: 600;
-}
-
-/* ---------- footer ---------- */
-.footer {
-  background: var(--paper);
-  border-top: 1px solid var(--line-light);
-  padding: 36px 20px;
-}
-
-.footer-inner {
-  max-width: var(--max-w);
-  margin: 0 auto;
+.fact {
   display: flex;
-  align-items: center;
-  gap: 24px;
+  align-items: baseline;
+  gap: 0.6rem;
+  font-size: 0.94rem;
+}
+
+.fact dt {
+  color: var(--ink-2);
+  flex: 0 0 auto;
+}
+
+.fact dd {
+  font-family: var(--font-machine), ui-monospace, monospace;
+  font-weight: 500;
+  text-align: right;
+  flex: 0 0 auto;
+}
+
+/* ==========================================================================
+   THE CATALOG - printed as a numbered list, never a grid of equal cards
+   ========================================================================== */
+
+.cat-filters {
+  display: grid;
+  gap: 0.7rem;
+  margin-bottom: 1.5rem;
+}
+
+.cat-row {
+  display: flex;
+  align-items: baseline;
+  gap: 0.75rem;
   flex-wrap: wrap;
 }
 
-.footer-links {
-  display: flex;
-  gap: 12px;
-  margin-left: auto;
-}
-
-.footer-links a {
-  font-family: var(--font-display);
-  font-weight: 600;
-  font-size: 0.82rem;
-  padding: 6px 12px;
-  border-radius: var(--radius-pill);
-  transition: background var(--transition-base);
-}
-
-.footer-links a:hover {
-  background: var(--line-light);
-}
-
-.footer-note {
-  font-size: 0.78rem;
+.cat-row-label {
+  font-family: var(--font-machine), ui-monospace, monospace;
+  font-size: 0.66rem;
+  font-weight: 700;
+  letter-spacing: 0.19em;
+  text-transform: uppercase;
   color: var(--ink-3);
-  width: 100%;
-  margin-top: 10px;
+  width: 4.25rem;
+  flex: 0 0 auto;
 }
 
-@media (max-width: 600px) {
-  .footer-inner {
-    flex-direction: column;
-    text-align: center;
-    gap: 14px;
-  }
-
-  .footer-links {
-    margin-left: 0;
-  }
-}
-
-/* ---------- confetti ---------- */
-.confetti-layer {
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: 200;
-}
-
-.confetti-piece {
-  position: absolute;
-  width: 8px;
-  height: 8px;
-  border-radius: 2px;
-  top: -10px;
-  animation: confetti-fall 2.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
-}
-
-@keyframes confetti-fall {
-  0% {
-    opacity: 1;
-    transform: translateY(0) rotate(0deg);
-  }
-
-  100% {
-    opacity: 0;
-    transform: translateY(100vh) rotate(720deg);
-  }
-}
-
-/* ---------- reduced motion ---------- */
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-  }
-
-  .marquee-track {
-    animation: none;
-    transform: none;
-  }
-
-  .click-target:active {
-    transform: none;
-  }
-
-  .quiz-opt:active:not(.locked) {
-    transform: none;
-  }
-
-  .persona:hover {
-    transform: none;
-  }
-
-  .catalog-card:hover {
-    transform: none;
-  }
-}
-
-/* ---------- focus outlines ---------- */
-:focus-visible {
-  outline: 3px solid var(--accent);
-  outline-offset: 2px;
-  border-radius: 4px;
-}
-
-/* ---------- tools grid responsive ---------- */
-@media (max-width: 1000px) {
-  .tools-grid {
-    grid-template-columns: repeat(2, 1fr);
-    grid-template-rows: auto auto auto;
-  }
-
-  .wheel-card {
-    grid-column: 1 / 3;
-    grid-row: 1 / 2;
-  }
-
-  .question-card {
-    grid-column: 1 / 2;
-    grid-row: 2 / 3;
-  }
-
-  .riddle-card {
-    grid-column: 2 / 3;
-    grid-row: 2 / 3;
-  }
-
-  .timer-card {
-    grid-column: 1 / 3;
-    grid-row: 3 / 4;
-  }
-}
-
-/* Single column is the floor for the bento. Without it the four tool cards stay
-   two-up on a phone, and their content boxes shrink to roughly 110px, which
-   pushes the generate button and the riddle buttons past the card edge. */
-@media (max-width: 640px) {
-  .tools-grid {
-    grid-template-columns: 1fr;
-    grid-template-rows: none;
-  }
-
-  .wheel-card,
-  .question-card,
-  .riddle-card,
-  .timer-card {
-    grid-column: 1 / -1;
-    grid-row: auto;
-  }
-}
-
-/* ---------- mobile ergonomics ----------
-   Tap targets and icon sizing rules that only need to hold on touch devices. */
-@media (max-width: 640px) {
-  /* An icon inside a flex button is otherwise a shrinkable/stretchable item and
-     grows to fill whatever space a narrow card leaves it. */
-  .btn svg,
-  .link-btn svg,
-  .icon-btn svg {
-    flex: 0 0 auto;
-  }
-
-  /* 44px is the smallest comfortable tap target; at desktop density these are
-     deliberately tighter, so this is scoped to touch widths. */
-  .chip,
-  .btn-sm,
-  .icon-btn,
-  .link-btn {
-    min-height: 44px;
-  }
-
-  .icon-btn {
-    width: 44px;
-    height: 44px;
-  }
-
-  /* Padding, not min-height, so the inline text link keeps its line box. */
-  .room-link {
-    padding: 8px 0;
-  }
-
-  .logo {
-    min-height: 44px;
-  }
-
-  /* Accent and outline small buttons are siblings of .btn-sm, not descendants,
-     so they need naming here to pick up the same tap target. */
-  .btn-sm-accent,
-  .btn-sm-outline,
-  .btn-sm-danger {
-    min-height: 44px;
-  }
-
-  /* Underlined inline toggle inside the login paragraph. Padding keeps the
-     paragraph's line height while widening the hit area. */
-  .login-switch button {
-    padding: 10px 4px;
-  }
-
-  .tool-card,
-  .game-card {
-    padding: 20px 18px;
-  }
-
-  .riddle-actions .btn,
-  .q-cats .chip {
-    flex: 1 1 auto;
-  }
-}
-
-/* ---------- public room lookup (/room) ----------
-   Token discipline, same as the rest of the public pages: no new colours
-   and no new radii, only --radius-card / --radius-input / --radius-pill. */
-.room-wrap {
-  min-height: 100dvh;
-  background: var(--paper);
+.cat-opts {
   display: flex;
-  flex-direction: column;
+  flex-wrap: wrap;
+  gap: 0.4rem;
 }
 
-.room-topbar {
-  border-bottom: 1px solid var(--line-light);
-  background: rgba(255, 247, 232, 0.92);
+.cat-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
 }
 
-.room-back {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  max-width: var(--max-w);
-  width: 100%;
-  margin: 0 auto;
-  padding: 14px 20px;
-  font-family: var(--font-display);
-  font-weight: 600;
+.cat-item {
+  display: grid;
+  grid-template-columns: 2.1rem minmax(0, 1fr);
+  gap: 0 0.85rem;
+  padding: 1.15rem 0 1.15rem;
+  border-top: 1px solid var(--rule-2);
+}
+
+.cat-item:last-child {
+  border-bottom: 1px solid var(--rule-2);
+}
+
+.cat-item-num {
+  font-family: var(--font-machine), ui-monospace, monospace;
+  font-weight: 700;
   font-size: 0.9rem;
-  text-decoration: none;
+  color: var(--ink-3);
+  font-variant-numeric: tabular-nums;
+  padding-top: 0.15rem;
+}
+
+.cat-item-name {
+  font-weight: 700;
+  font-stretch: 84%;
+  font-size: 1.12rem;
+  letter-spacing: -0.014em;
+}
+
+.cat-item-desc {
+  color: var(--ink-2);
+  font-size: 0.93rem;
+  margin-top: 0.25rem;
+  max-width: 58ch;
+}
+
+/* The tag of origin, donated by the declined bazaar: duration and whether a
+   gadget is needed are legible before the description is read. */
+.cat-item-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin-top: 0.55rem;
+}
+
+.tag {
+  font-family: var(--font-machine), ui-monospace, monospace;
+  font-size: 0.68rem;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 0.2rem 0.5rem 0.16rem;
+  border-radius: 2px;
+  box-shadow: inset 0 0 0 1.5px var(--rule);
   color: var(--ink-2);
 }
 
-.room-back:hover {
-  color: var(--ink);
+.tag-strong {
+  background: var(--ink);
+  color: var(--paper);
+  box-shadow: none;
 }
 
-.room-main {
-  flex: 1;
-  display: flex;
-  justify-content: center;
-  padding: 40px 20px 64px;
+.tag-offline {
+  background: var(--stamp);
+  color: #fff;
+  box-shadow: none;
 }
 
-.room-card {
-  width: 100%;
-  max-width: 460px;
-  height: fit-content;
-}
-
-.room-form {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  margin-bottom: 20px;
-}
-
-.room-label {
-  font-family: var(--font-display);
-  font-weight: 700;
+.cat-empty {
+  padding: 2.5rem 0;
+  text-align: center;
+  color: var(--ink-2);
   font-size: 0.95rem;
 }
 
-.room-input {
-  width: 100%;
-  font-family: var(--font-display);
+/* ==========================================================================
+   THE AUDIENCE BLOCK
+   ========================================================================== */
+
+.aud-list {
+  display: grid;
+  gap: 0;
+}
+
+.aud-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0.3rem;
+  padding: 1.15rem 0;
+  border-top: 1px solid var(--rule-2);
+}
+
+.aud-row:last-child {
+  border-bottom: 1px solid var(--rule-2);
+}
+
+.aud-head {
+  display: flex;
+  align-items: baseline;
+  gap: 0.7rem;
+  flex-wrap: wrap;
+}
+
+.aud-who {
+  font-weight: 700;
+  font-stretch: 84%;
+  font-size: 1.1rem;
+  letter-spacing: -0.012em;
+}
+
+.aud-says {
+  color: var(--ink-2);
+  max-width: 60ch;
+}
+
+/* ==========================================================================
+   THE COUNTER WINDOW - an instrument recessed into the laminate
+   Used where a facilitator must read a number from across the room.
+   ========================================================================== */
+
+.window {
+  background: var(--counter);
+  color: var(--paper);
+  box-shadow: var(--recess);
+  padding: 1.25rem 1.35rem 1.35rem;
+  text-align: center;
+}
+
+.window-value {
+  font-family: var(--font-machine), ui-monospace, monospace;
+  font-weight: 700;
+  font-size: clamp(2.6rem, 8vw, 4rem);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+  line-height: 1;
+  color: var(--paper);
+}
+
+.window-value.is-done {
+  color: var(--stamp-2);
+}
+
+.window-label {
+  font-family: var(--font-machine), ui-monospace, monospace;
+  font-size: 0.68rem;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--counter-ink-3);
+  margin-top: 0.5rem;
+}
+
+/* A fill bar drawn as a printed rule, not a progress ring. */
+.gauge {
+  position: relative;
+  height: 8px;
+  margin-top: 1rem;
+  background: var(--counter-2);
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.06);
+}
+
+.gauge-fill {
+  position: absolute;
+  inset: 0 auto 0 0;
+  background: var(--stamp);
+  transition: width 0.35s linear;
+}
+
+.gauge-fill.is-done {
+  background: var(--paper);
+}
+
+/* ==========================================================================
+   THE TICKET STUB  (/room)
+   A stub is the smallest thing a printer can produce: one short length torn
+   off the roll. That is exactly the participant's job, so the page is a stub
+   on the same counter rather than a form floating in an empty viewport.
+   ========================================================================== */
+
+.stub-wrap {
+  min-height: 100dvh;
+  display: grid;
+  align-content: start;
+  justify-items: center;
+  gap: 1rem;
+  padding: 1.25rem 1.25rem 4rem;
+  background:
+    radial-gradient(
+      120% 70% at 50% -10%,
+      rgb(255 255 255 / 0.05),
+      rgb(255 255 255 / 0) 62%
+    ),
+    var(--counter);
+}
+
+.stub-where {
+  justify-self: start;
+}
+
+.stub {
+  width: min(100%, 30rem);
+  background: var(--paper);
+  color: var(--ink);
+  box-shadow: var(--raise);
+  padding: 1.9rem 1.75rem 1.6rem;
+}
+
+.stub-title {
+  font-size: clamp(1.7rem, 6vw, 2.15rem);
   font-weight: 800;
-  font-size: 1.6rem;
+  font-stretch: 84%;
+  letter-spacing: -0.026em;
+  margin-top: 0.35rem;
+}
+
+.stub-lede {
+  color: var(--ink-2);
+  font-size: 0.93rem;
+  margin-top: 0.45rem;
+}
+
+.stub .tear {
+  margin-block: 1.4rem;
+}
+
+.stub-form {
+  display: grid;
+  gap: 0.45rem;
+  justify-items: start;
+}
+
+.stub-form .key-block,
+.stub-result .key-block {
+  width: 100%;
+  margin-top: 0.5rem;
+}
+
+.stub-hint {
+  font-size: 0.85rem;
+  color: var(--ink-2);
+}
+
+.stub-code {
+  width: 100%;
+  border: 0;
+  border-radius: 2px;
+  background: var(--paper-2);
+  box-shadow: inset 0 0 0 1.5px var(--rule);
+  padding: 0.8rem 0.5rem;
+  font-family: var(--font-machine), ui-monospace, monospace;
+  font-weight: 700;
+  font-size: 1.8rem;
   letter-spacing: 0.22em;
   text-align: center;
   text-transform: uppercase;
-  padding: 14px 16px;
-  border: 2px solid var(--line);
-  border-radius: var(--radius-input);
-  background: #fff;
-  color: var(--ink);
 }
 
-.room-input::placeholder {
-  color: var(--ink-3);
+.stub-code:focus {
+  outline: none;
+  box-shadow: inset 0 0 0 2px var(--stamp);
+}
+
+.stub-code::placeholder {
+  color: var(--ghost);
   letter-spacing: 0.22em;
 }
 
-.room-input:focus-visible {
-  outline: 3px solid var(--accent);
-  outline-offset: 2px;
-  border-color: var(--accent);
+/* The machine echoing the code it found. */
+.stub-code-out {
+  font-family: var(--font-machine), ui-monospace, monospace;
+  font-weight: 700;
+  font-size: 2.3rem;
+  letter-spacing: 0.16em;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+  padding-block: 0.35rem 0.9rem;
+  border-bottom: 1px dashed var(--rule);
+  margin-bottom: 1rem;
 }
 
-.room-hint {
-  font-size: 0.85rem;
-  color: var(--ink-2);
-  margin-bottom: 6px;
+.stub-result {
+  display: grid;
+  gap: 0.75rem;
+  margin-top: 1.4rem;
 }
 
-/* Participants arrive here on a phone, so the primary action gets a full
-   44px target even though .btn-sm is 41px. */
-.room-form .btn {
-  min-height: 44px;
-}
-
-.room-result:empty {
+.stub-result:empty {
   display: none;
 }
 
-.room-code-big {
-  font-family: var(--font-display);
-  font-weight: 800;
-  font-size: 2.6rem;
-  letter-spacing: 0.14em;
-  text-align: center;
-  color: var(--accent);
-  margin-bottom: 18px;
-}
-
-.room-facts {
-  display: grid;
-  gap: 10px;
-  margin-bottom: 20px;
-}
-
-.room-facts > div {
+.stub-note {
   display: flex;
-  justify-content: space-between;
-  gap: 12px;
-  padding-bottom: 10px;
-  border-bottom: 1px solid var(--line-light);
-}
-
-.room-facts dt {
-  font-size: 0.88rem;
-  color: var(--ink-2);
-}
-
-.room-facts dd {
-  font-family: var(--font-display);
-  font-weight: 700;
-  font-size: 0.95rem;
-  text-align: right;
-}
-
-.room-note {
-  display: flex;
-  align-items: flex-start;
-  gap: 8px;
-  font-size: 0.9rem;
-  line-height: 1.5;
-  padding: 14px 16px;
-  border-radius: var(--radius-sm);
-  background: var(--line-light);
-  color: var(--ink-2);
-}
-
-.room-note svg {
-  flex-shrink: 0;
-  margin-top: 1px;
-}
-
-.room-note.is-missing {
-  background: var(--line-light);
-}
-
-.room-note.is-error {
-  background: var(--soft-red);
-  color: var(--accent-deep);
-}
-
-.room-link {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  font-family: var(--font-display);
-  font-weight: 700;
-  color: var(--accent);
-  text-decoration: underline;
-  text-underline-offset: 3px;
-}
-
-.room-link:hover {
-  color: var(--accent-deep);
-}
-
-/* ---------- admin (/admin) ----------
-   Token discipline: no new colors, no new radii. Panels/tables use
-   --radius-card, buttons stay pill, inputs --radius-input, dialogs
-   --radius-tool. Denser than the public pages, which are marketing
-   surfaces rather than data surfaces. */
-
-.admin-shell {
-  min-height: 100dvh;
+  gap: 0.6rem;
+  padding: 0.85rem 0.95rem;
   background: var(--paper-2);
-  display: flex;
-  flex-direction: column;
+  border-radius: 2px;
+  font-size: 0.88rem;
+  line-height: 1.5;
+  color: var(--ink-2);
 }
 
-.admin-topbar {
+.stub-note.is-error {
   background: var(--ink);
   color: var(--paper);
-  position: sticky;
-  top: 0;
-  z-index: 80;
 }
 
-.admin-topbar-inner {
-  max-width: var(--max-w);
+.stub-note.is-warning {
+  background: var(--paper-2);
+  box-shadow: inset 0 0 0 1.5px var(--rule);
+  margin-top: 0.85rem;
+}
+
+.stub-note svg {
+  flex: 0 0 auto;
+  margin-top: 0.15rem;
+}
+
+/* ==========================================================================
+   THE LEDGER  (/admin) - the same world worn harder
+   ========================================================================== */
+
+.ledger {
+  min-height: 100dvh;
+  display: grid;
+  grid-template-rows: auto 1fr;
+  background:
+    radial-gradient(
+      120% 70% at 50% -10%,
+      rgb(255 255 255 / 0.05),
+      rgb(255 255 255 / 0) 62%
+    ),
+    var(--counter);
+}
+
+.ledger-bar {
+  background: var(--counter-2);
+  box-shadow: inset 0 -1px 0 rgb(0 0 0 / 0.4);
+}
+
+.ledger-bar-inner {
+  max-width: 74rem;
   margin: 0 auto;
-  padding: 0 20px;
-  height: 64px;
+  padding: 0.85rem 1.25rem;
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: 0.9rem;
+  flex-wrap: wrap;
 }
 
-.admin-brand {
-  display: flex;
-  align-items: center;
-  gap: 9px;
-  text-decoration: none;
-  color: var(--paper);
-  font-family: var(--font-display);
-  font-weight: 800;
-  font-size: 1rem;
-}
-
-.admin-brand-mark {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 30px;
-  height: 30px;
-  border-radius: var(--radius-pill);
-  background: var(--accent);
-  color: #fff;
-  flex-shrink: 0;
-}
-
-.admin-topbar-meta {
+.ledger-bar-meta {
   margin-left: auto;
   display: flex;
   align-items: center;
-  gap: 10px;
-  font-size: 0.82rem;
-  color: var(--paper-2);
+  gap: 0.75rem;
 }
 
-.admin-topbar-email {
-  max-width: 220px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-/* .btn-primary is coral-on-cream and fails contrast on the dark topbar. */
-.btn-on-dark {
-  background: transparent;
-  color: var(--paper);
-  border: 2px solid var(--ink-3);
-  padding: 7px 16px;
-  font-size: 0.8rem;
-}
-
-.btn-on-dark:hover {
-  border-color: var(--paper);
-  background: rgba(255, 247, 232, 0.08);
-}
-
-/* ---------- tabs ---------- */
-
-.admin-tabs {
-  background: var(--paper);
-  border-bottom: 1.5px solid var(--line);
-  position: sticky;
-  top: 64px;
-  z-index: 70;
-  overflow-x: auto;
-}
-
-.admin-tabs-inner {
-  max-width: var(--max-w);
-  margin: 0 auto;
-  padding: 0 20px;
-  display: flex;
-  gap: 4px;
-}
-
-.admin-tab {
-  font-family: var(--font-display);
+.ledger-slash {
+  font-family: var(--font-machine), ui-monospace, monospace;
   font-weight: 700;
-  font-size: 0.92rem;
-  color: var(--ink-2);
-  padding: 14px 16px;
-  border-bottom: 3px solid transparent;
-  white-space: nowrap;
+  font-size: 0.82rem;
+  color: var(--stamp-2);
+}
+
+.ledger-brand {
   display: inline-flex;
   align-items: center;
-  gap: 7px;
-  transition: color var(--transition-base);
+  gap: 0.6rem;
+  font-weight: 700;
+  font-stretch: 88%;
+  font-size: 1rem;
+  text-decoration: none;
+  color: var(--paper);
 }
 
-.admin-tab:hover {
+.ledger-brand-mark {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  background: var(--paper);
   color: var(--ink);
 }
 
-.admin-tab.is-active {
-  color: var(--accent);
-  border-bottom-color: var(--accent);
+.ledger-who {
+  margin-left: auto;
+  font-family: var(--font-machine), ui-monospace, monospace;
+  font-size: 0.78rem;
+  color: var(--counter-ink-3);
 }
 
-.admin-tab-count {
-  font-size: 0.72rem;
-  font-weight: 700;
-  background: var(--line-light);
+.ledger-main {
+  padding: 1.75rem 1.25rem 5rem;
+}
+
+/* ---------- the gate ---------- */
+
+.login-wrap {
+  min-height: 100dvh;
+  display: grid;
+  align-content: center;
+  justify-items: stretch;
+  padding: 2rem 1.25rem;
+  background:
+    radial-gradient(
+      120% 70% at 50% -10%,
+      rgb(255 255 255 / 0.05),
+      rgb(255 255 255 / 0) 62%
+    ),
+    var(--counter);
+}
+
+.login-card {
+  width: min(100%, 30rem);
+  margin-inline: auto;
+  background: var(--paper);
+  color: var(--ink);
+  box-shadow: var(--raise);
+  padding: 1.9rem 1.75rem;
+}
+
+.login-title {
+  font-size: clamp(1.6rem, 5.5vw, 2rem);
+  font-weight: 800;
+  font-stretch: 84%;
+  letter-spacing: -0.026em;
+}
+
+.login-sub {
   color: var(--ink-2);
-  border-radius: var(--radius-pill);
-  padding: 1px 8px;
-  min-width: 22px;
-  text-align: center;
+  font-size: 0.92rem;
+  margin-top: 0.6rem;
 }
 
-.admin-tab.is-active .admin-tab-count {
-  background: var(--soft-red);
-  color: var(--accent-deep);
+.login-sub code {
+  font-family: var(--font-machine), ui-monospace, monospace;
+  font-size: 0.88em;
+  background: var(--paper-2);
+  padding: 0.05em 0.35em;
+  border-radius: 2px;
 }
 
-/* ---------- page body ---------- */
-
-.admin-body {
-  flex: 1;
-  max-width: var(--max-w);
-  width: 100%;
-  margin: 0 auto;
-  padding: 28px 20px 72px;
+.login-fields {
+  display: grid;
+  gap: 0.75rem;
+  margin-top: 1.35rem;
 }
 
-.admin-panel-head {
+.login-switch {
+  margin-top: 1.1rem;
+  font-size: 0.86rem;
+  color: var(--ink-2);
+}
+
+.login-card .pkey,
+.login-card .banner {
+  margin-top: 1.1rem;
+}
+
+.ledger-shell {
+  width: min(100%, 74rem);
+  margin-inline: auto;
+}
+
+.ledger-tabs {
+  margin-bottom: 1.5rem;
+}
+
+.ledger-tabs-inner {
+  display: flex;
+  gap: 0.35rem;
+  overflow-x: auto;
+  padding-bottom: 0.35rem;
+}
+
+.ledger-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  white-space: nowrap;
+  border: 0;
+  border-radius: 2px;
+  padding: 0.6rem 0.9rem;
+  background: none;
+  box-shadow: inset 0 0 0 1.5px var(--counter-3);
+  color: var(--ink-2);
+  font-family: var(--font-machine), ui-monospace, monospace;
+  font-weight: 500;
+  font-size: 0.82rem;
+  cursor: pointer;
+  transition: box-shadow 0.16s var(--ease), color 0.16s var(--ease);
+}
+
+.ledger-tab:hover {
+  color: var(--paper);
+  box-shadow: inset 0 0 0 1.5px #565349;
+}
+
+.ledger-tab.is-on {
+  background: var(--paper);
+  color: var(--ink);
+  box-shadow: none;
+  font-weight: 700;
+}
+
+.ledger-tab-count {
+  font-size: 0.72rem;
+  padding: 0.05rem 0.35rem;
+  border-radius: 2px;
+  background: rgb(255 255 255 / 0.08);
+}
+
+.ledger-tab.is-on .ledger-tab-count {
+  background: var(--paper-3);
+}
+
+/* The sheet: a stack of printed forms on the counter. */
+.sheet {
+  background: var(--paper);
+  color: var(--ink);
+  box-shadow: var(--raise);
+  padding: 1.5rem 1.5rem 1.75rem;
+  margin-bottom: 1.5rem;
+}
+
+.sheet-head {
   display: flex;
   align-items: flex-start;
-  gap: 16px;
-  margin-bottom: 20px;
+  gap: 0.9rem;
   flex-wrap: wrap;
+  margin-bottom: 1.1rem;
+  padding-bottom: 0.9rem;
+  border-bottom: 1px dashed var(--rule);
 }
 
-.admin-panel-title {
-  font-family: var(--font-display);
+.sheet-title {
+  font-size: 1.35rem;
   font-weight: 800;
-  font-size: 1.5rem;
-  line-height: 1.2;
-  margin-bottom: 4px;
+  font-stretch: 84%;
+  letter-spacing: -0.02em;
 }
 
-.admin-panel-sub {
-  font-size: 0.92rem;
+.sheet-sub {
+  font-size: 0.85rem;
   color: var(--ink-2);
-  max-width: 62ch;
-  line-height: 1.55;
+  margin-top: 0.2rem;
 }
 
-.admin-panel-actions {
+.sheet-actions {
   margin-left: auto;
   display: flex;
-  gap: 8px;
-  align-items: center;
+  gap: 0.45rem;
   flex-wrap: wrap;
 }
 
-/* ---------- stat strip ---------- */
-
-.admin-stats {
+/* Statistics as printed totals, never a row of equal metric cards. */
+.totals {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 12px;
-  margin-bottom: 24px;
-}
-
-.admin-stat {
+  gap: 0;
   background: var(--paper);
-  border: 1.5px solid var(--line);
-  border-radius: var(--radius-sm);
-  padding: 14px 16px;
-}
-
-.admin-stat-num {
-  font-family: var(--font-display);
-  font-weight: 800;
-  font-size: 1.7rem;
-  line-height: 1.1;
   color: var(--ink);
-  font-variant-numeric: tabular-nums;
+  box-shadow: var(--raise-sm);
+  margin-bottom: 1.5rem;
 }
 
-.admin-stat-label {
-  font-size: 0.76rem;
-  color: var(--ink-2);
-  font-weight: 600;
-  margin-top: 2px;
+.total-row {
+  display: flex;
+  align-items: baseline;
+  gap: 0.75rem;
+  padding: 0.85rem 1.25rem;
+  border-bottom: 1px solid var(--rule-2);
 }
 
-/* ---------- table ---------- */
-
-.table-scroll {
-  background: var(--paper);
-  border: 1.5px solid var(--line);
-  border-radius: var(--radius-card);
-  overflow-x: auto;
+.total-row:last-child {
+  border-bottom: 0;
 }
 
-.admin-table {
-  width: 100%;
-  /* Below this the title column gets crushed and slugs break mid-token.
-     .table-scroll absorbs the overflow as a horizontal scroll on phones. */
-  min-width: 880px;
-  border-collapse: collapse;
-  font-size: 0.88rem;
-}
-
-.admin-table th {
-  text-align: left;
-  font-family: var(--font-display);
+.total-num {
+  font-family: var(--font-machine), ui-monospace, monospace;
   font-weight: 700;
-  font-size: 0.74rem;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--ink-2);
-  padding: 11px 16px;
-  border-bottom: 1.5px solid var(--line);
-  white-space: nowrap;
-  background: var(--paper-2);
+  font-size: 1.6rem;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+  min-width: 3.5rem;
 }
 
-.admin-table td {
-  padding: 11px 16px;
-  border-bottom: 1px solid var(--line-light);
+.total-name {
+  font-weight: 700;
+  font-stretch: 84%;
+}
+
+/* The ledger table: rows separated by dotted leaders, no vertical rules, no
+   zebra fill, no cell borders. */
+.ltable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.92rem;
+}
+
+.ltable th {
+  text-align: left;
+  font-family: var(--font-machine), ui-monospace, monospace;
+  font-weight: 700;
+  font-size: 0.66rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  padding: 0 0.75rem 0.6rem 0;
+  border-bottom: 1px solid var(--ink);
+  white-space: nowrap;
+}
+
+.ltable td {
+  padding: 0.7rem 0.75rem 0.7rem 0;
+  border-bottom: 1px dotted var(--rule);
   vertical-align: middle;
 }
 
-.admin-table tbody tr:last-child td {
-  border-bottom: none;
-}
-
-.admin-table tbody tr {
-  transition: background var(--transition-base);
-}
-
-.admin-table tbody tr:hover {
+.ltable tbody tr:hover td {
   background: var(--paper-2);
 }
 
-.cell-strong {
-  font-family: var(--font-display);
-  font-weight: 700;
-  color: var(--ink);
-}
-
-.cell-muted {
-  color: var(--ink-2);
-}
-
-.cell-num {
+.ltable .num {
+  font-family: var(--font-machine), ui-monospace, monospace;
   font-variant-numeric: tabular-nums;
-  font-family: var(--font-display);
-  font-weight: 700;
-  color: var(--ink);
 }
 
-.cell-mono {
-  font-family: var(--font-display);
-  font-size: 0.92rem;
-  letter-spacing: 0.06em;
+.ltable .code {
+  font-family: var(--font-machine), ui-monospace, monospace;
   font-weight: 700;
-  white-space: nowrap;
+  letter-spacing: 0.08em;
+  color: var(--stamp);
 }
 
-.cell-actions {
+.ltable .strong {
+  font-weight: 700;
+  font-stretch: 84%;
+}
+
+.ltable .muted {
+  color: var(--ink-2);
+}
+
+.ltable .cell-actions {
   display: flex;
-  gap: 6px;
+  gap: 0.4rem;
   justify-content: flex-end;
-  white-space: nowrap;
 }
 
-/* ---------- pills (semantic state only) ---------- */
-
-.pill {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  font-family: var(--font-display);
-  font-weight: 700;
-  font-size: 0.74rem;
-  border-radius: var(--radius-pill);
-  padding: 3px 11px;
-  border: 1.5px solid transparent;
-  white-space: nowrap;
+.table-scroll {
+  overflow-x: auto;
 }
 
-.pill-neutral {
-  background: var(--line-light);
-  color: var(--ink-2);
-  border-color: var(--line);
-}
-
-.pill-accent {
-  background: var(--soft-red);
-  color: var(--accent-deep);
-  border-color: #f5bfb6;
-}
-
-.pill-sun {
-  background: var(--info-bg);
-  color: var(--info-ink);
-  border-color: var(--info);
-}
-
-.pill-teal {
-  background: var(--ok-bg);
-  color: var(--ok-ink);
-  border-color: var(--ok);
-}
-
-/* ---------- forms ---------- */
-
-.form-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
-}
-
-.field {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.field-full {
-  grid-column: 1 / -1;
-}
-
-.field-label {
-  font-family: var(--font-display);
-  font-weight: 700;
-  font-size: 0.82rem;
-  color: var(--ink);
-}
-
-.field-help {
-  font-size: 0.76rem;
-  color: var(--ink-2);
-  line-height: 1.45;
-}
-
-.field-error {
-  font-size: 0.78rem;
-  color: var(--accent-deep);
-  font-weight: 600;
-}
+/* ---------- the printed form ---------- */
 
 .input,
 .select,
 .textarea {
   width: 100%;
-  font-family: var(--font-body);
+  border: 0;
+  border-radius: 2px;
+  background: var(--paper-2);
+  box-shadow: inset 0 0 0 1.5px var(--rule);
+  padding: 0.6rem 0.75rem;
+  font-family: var(--font-machine), ui-monospace, monospace;
   font-size: 0.92rem;
   color: var(--ink);
-  background: #fff;
-  border: 2px solid var(--line);
-  border-radius: var(--radius-input);
-  padding: 10px 13px;
-  transition: border-color var(--transition-base);
+  transition: box-shadow 0.16s var(--ease);
 }
 
-.input::placeholder,
-.textarea::placeholder {
-  color: var(--ink-2);
-  opacity: 1;
-}
-
-.input:hover,
-.select:hover,
-.textarea:hover {
-  border-color: var(--ink-3);
+.textarea {
+  font-family: var(--font-human), system-ui, sans-serif;
+  line-height: 1.5;
+  resize: vertical;
+  min-height: 92px;
 }
 
 .input:focus,
 .select:focus,
 .textarea:focus {
   outline: none;
-  border-color: var(--accent);
-  box-shadow: 0 0 0 3px rgba(209, 47, 30, 0.16);
+  box-shadow: inset 0 0 0 2px var(--stamp);
 }
 
 .input[aria-invalid="true"],
+.select[aria-invalid="true"],
 .textarea[aria-invalid="true"] {
-  border-color: var(--accent);
+  box-shadow: inset 0 0 0 2px var(--stamp);
 }
 
-.select {
-  appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%236b5a4b' d='M1 1l5 5 5-5'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 13px center;
-  padding-right: 34px;
-  cursor: pointer;
+.field-help {
+  font-size: 0.8rem;
+  line-height: 1.4;
+  color: var(--ink-2);
 }
 
-.textarea {
-  min-height: 90px;
-  line-height: 1.55;
+/* A destructive action is a printed key with the stamp ink, not a red button:
+   this world has no second accent to spend on danger. */
+.pkey-danger {
+  background: none;
+  color: var(--stamp);
+  box-shadow: inset 0 0 0 1.5px var(--stamp);
 }
 
-.checkbox-row {
-  display: flex;
-  align-items: center;
-  gap: 9px;
-  padding: 10px 0;
-}
-
-.checkbox-row input {
-  width: 18px;
-  height: 18px;
-  accent-color: var(--accent);
-  cursor: pointer;
-  flex-shrink: 0;
-}
-
-.checkbox-label {
-  font-size: 0.9rem;
-  font-weight: 600;
-  color: var(--ink);
-  cursor: pointer;
-}
-
-/* ---------- admin buttons ---------- */
-
-.btn-sm-accent {
-  background: var(--accent);
+.pkey-danger:hover:not(:disabled) {
+  background: var(--stamp);
   color: #fff;
-  font-size: 0.85rem;
-  padding: 8px 18px;
-  gap: 6px;
 }
 
-.btn-sm-accent:hover {
-  background: var(--accent-deep);
+/* ---------- printed pills ---------- */
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-family: var(--font-machine), ui-monospace, monospace;
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 0.2rem 0.5rem 0.16rem;
+  border-radius: 2px;
+  background: var(--paper-2);
+  color: var(--ink-2);
 }
 
-.btn-sm-accent:disabled {
-  background: var(--ink-3);
-  cursor: not-allowed;
-  box-shadow: none;
+.pill-accent {
+  background: var(--ink);
+  color: var(--paper);
 }
 
-.btn-sm-outline {
-  background: transparent;
-  border: 2px solid var(--line);
-  color: var(--ink);
-  font-size: 0.85rem;
-  padding: 7px 16px;
-  gap: 6px;
+.pill-sun,
+.pill-teal {
+  background: var(--stamp);
+  color: #fff;
 }
 
-.btn-sm-outline:hover {
-  border-color: var(--ink);
-}
-
-.btn-sm-outline:disabled {
-  color: var(--ink-3);
-  border-color: var(--line);
-  cursor: not-allowed;
-}
-
-.btn-sm-danger {
-  background: transparent;
-  border: 2px solid #f5bfb6;
-  color: var(--accent-deep);
-  font-size: 0.85rem;
-  padding: 7px 14px;
-  gap: 6px;
-}
-
-.btn-sm-danger:hover {
-  background: var(--soft-red);
-  border-color: var(--soft-red-2);
-}
-
-.btn-sm-danger:disabled {
-  color: var(--ink-3);
-  border-color: var(--line);
-  cursor: not-allowed;
-}
-
-/* ---------- banners ---------- */
-
-.banner {
-  display: flex;
-  align-items: flex-start;
-  gap: 10px;
-  border-radius: var(--radius-sm);
-  padding: 12px 16px;
-  font-size: 0.88rem;
-  line-height: 1.5;
-  margin-bottom: 16px;
-  border: 1.5px solid;
-}
-
-.banner-error {
-  background: var(--soft-red);
-  border-color: #f5bfb6;
-  color: #7d1b0f;
-}
-
-.banner-ok {
-  background: var(--ok-bg);
-  border-color: var(--ok);
-  color: var(--ok-ink);
-}
-
-.banner-info {
-  background: var(--info-bg);
-  border-color: var(--info);
-  color: var(--info-ink);
-}
-
-.banner-icon {
-  flex-shrink: 0;
-  margin-top: 1px;
-}
-
-/* ---------- empty + skeleton ---------- */
+/* ---------- empty state and skeleton ---------- */
 
 .empty-state {
-  background: var(--paper);
-  border: 2px dashed var(--line);
-  border-radius: var(--radius-card);
-  padding: 52px 28px;
+  background: var(--paper-2);
+  padding: 1.75rem 1.5rem;
   text-align: center;
 }
 
 .empty-state-title {
-  font-family: var(--font-display);
-  font-weight: 800;
-  font-size: 1.1rem;
-  margin-bottom: 6px;
+  font-weight: 700;
+  font-stretch: 84%;
+  font-size: 1.08rem;
+  margin-bottom: 0.35rem;
 }
 
 .empty-state-body {
-  font-size: 0.9rem;
   color: var(--ink-2);
-  max-width: 46ch;
-  margin: 0 auto 18px;
-  line-height: 1.55;
+  font-size: 0.9rem;
+  max-width: 48ch;
+  margin: 0 auto;
 }
 
 .skeleton {
-  background: linear-gradient(
-    90deg,
-    var(--line-light) 0%,
-    var(--paper-2) 50%,
-    var(--line-light) 100%
-  );
-  background-size: 200% 100%;
-  border-radius: 6px;
-  height: 14px;
-  animation: skeleton-sweep 1.3s ease-in-out infinite;
+  height: 0.85rem;
+  background: var(--paper-2);
+  box-shadow: inset 0 0 0 1px var(--rule-2);
 }
 
-@keyframes skeleton-sweep {
-  0% {
-    background-position: 200% 0;
+.form-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0.9rem;
+}
+
+@media (min-width: 640px) {
+  .form-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
-  100% {
-    background-position: -200% 0;
+  .form-grid .full {
+    grid-column: 1 / -1;
   }
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  min-width: 0;
+}
+
+.field-label {
+  font-family: var(--font-machine), ui-monospace, monospace;
+  font-weight: 700;
+  font-size: 0.68rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+}
+
+.field-error {
+  font-family: var(--font-machine), ui-monospace, monospace;
+  font-size: 0.76rem;
+  font-weight: 500;
+  color: var(--stamp);
+}
+
+.check-row {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+}
+
+.check-label {
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.banner {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.55rem;
+  padding: 0.8rem 1rem;
+  margin: 0 0 1rem;
+  border-radius: 2px;
+  font-size: 0.88rem;
+  background: var(--paper-2);
+  color: var(--ink-2);
+}
+
+.banner-ok {
+  background: var(--ink);
+  color: var(--paper);
+}
+
+.banner-error {
+  background: var(--stamp);
+  color: #fff;
 }
 
 /* ---------- modal ---------- */
@@ -2486,192 +2424,60 @@ textarea {
 .modal-backdrop {
   position: fixed;
   inset: 0;
-  background: rgba(50, 40, 31, 0.5);
-  z-index: 120;
-  display: flex;
-  align-items: flex-start;
-  justify-content: center;
-  padding: 40px 20px;
-  overflow-y: auto;
-  animation: modal-fade 0.16s ease-out;
-}
-
-@keyframes modal-fade {
-  from {
-    opacity: 0;
-  }
-
-  to {
-    opacity: 1;
-  }
-}
-
-.modal {
-  background: var(--paper);
-  border-radius: var(--radius-lg);
-  border-top: 5px solid var(--accent);
-  width: 100%;
-  max-width: 720px;
-  box-shadow: 0 24px 64px rgba(50, 40, 31, 0.28);
-  animation: modal-rise 0.22s cubic-bezier(0.16, 1, 0.3, 1);
-  margin: auto 0;
-}
-
-.modal-sm {
-  max-width: 460px;
-}
-
-@keyframes modal-rise {
-  from {
-    opacity: 0;
-    transform: translateY(14px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.modal-head {
-  padding: 22px 26px 14px;
-  border-bottom: 1.5px solid var(--line-light);
-}
-
-.modal-title {
-  font-family: var(--font-display);
-  font-weight: 800;
-  font-size: 1.22rem;
-  line-height: 1.25;
-}
-
-.modal-sub {
-  font-size: 0.86rem;
-  color: var(--ink-2);
-  margin-top: 4px;
-  line-height: 1.5;
+  z-index: 80;
+  background: rgb(12 12 10 / 0.68);
+  display: grid;
+  place-items: center;
+  padding: 1.25rem;
 }
 
 .modal-body {
-  padding: 22px 26px;
+  background: var(--paper);
+  color: var(--ink);
+  width: min(100%, 34rem);
+  max-height: 88dvh;
+  overflow-y: auto;
+  box-shadow: var(--raise);
+}
+
+.modal-head {
+  padding: 1.25rem 1.4rem;
+  border-bottom: 1px dashed var(--rule);
+}
+
+.modal-title {
+  font-size: 1.2rem;
+  font-weight: 800;
+  font-stretch: 84%;
+  letter-spacing: -0.018em;
+}
+
+.modal-sub {
+  font-size: 0.85rem;
+  color: var(--ink-2);
+  margin-top: 0.2rem;
+}
+
+.modal-body form {
+  padding: 1.25rem 1.4rem;
 }
 
 .modal-foot {
-  padding: 16px 26px 22px;
   display: flex;
-  gap: 10px;
+  gap: 0.5rem;
   justify-content: flex-end;
-  border-top: 1.5px solid var(--line-light);
-  flex-wrap: wrap;
+  padding: 0 1.4rem 1.25rem;
 }
 
-/* ---------- login ---------- */
-
-.login-wrap {
-  min-height: 100dvh;
-  background: var(--paper-2);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 40px 20px;
+.hidden {
+  display: none !important;
 }
 
-.login-card {
-  background: var(--paper);
-  border: 1.5px solid var(--line);
-  border-radius: var(--radius-lg);
-  border-top: 5px solid var(--accent);
-  width: 100%;
-  max-width: 420px;
-  padding: 32px 30px;
-  box-shadow: 0 18px 48px rgba(50, 40, 31, 0.12);
-}
-
-.login-title {
-  font-family: var(--font-display);
-  font-weight: 800;
-  font-size: 1.4rem;
-  margin-bottom: 6px;
-  line-height: 1.2;
-}
-
-.login-sub {
-  font-size: 0.9rem;
-  color: var(--ink-2);
-  line-height: 1.55;
-  margin-bottom: 22px;
-}
-
-.login-fields {
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-}
-
-.login-switch {
-  margin-top: 18px;
-  text-align: center;
-  font-size: 0.86rem;
-  color: var(--ink-2);
-}
-
-.login-switch button {
-  color: var(--accent);
-  font-weight: 700;
-  font-family: var(--font-display);
-  text-decoration: underline;
-  text-underline-offset: 3px;
-}
-
-/* ---------- responsive ---------- */
-
-@media (max-width: 900px) {
-  .admin-stats {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-@media (max-width: 700px) {
-  .form-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .admin-panel-actions {
-    margin-left: 0;
-    width: 100%;
-  }
-
-  .admin-topbar-email {
-    display: none;
-  }
-
-  .modal-backdrop {
-    padding: 16px 12px;
-  }
-
-  .modal-head,
-  .modal-body,
-  .modal-foot {
-    padding-left: 18px;
-    padding-right: 18px;
-  }
-
-  .modal-foot {
-    flex-direction: column-reverse;
-  }
-
-  .modal-foot .btn {
-    width: 100%;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .skeleton {
-    animation: none;
-  }
-
-  .modal-backdrop,
-  .modal {
-    animation: none;
-  }
+.visually-hidden-inline {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
 }

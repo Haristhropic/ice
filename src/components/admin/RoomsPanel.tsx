@@ -247,14 +247,14 @@ export function RoomsPanel({
           <>
             <button
               type="button"
-              className="btn btn-sm-outline"
+              className="pkey pkey-quiet pkey-sm"
               onClick={reload}
               aria-label="Muat ulang room"
             >
               <ArrowClockwise size={16} weight="bold" />
               Muat ulang
             </button>
-            <button type="button" className="btn btn-sm-accent" onClick={openCreate}>
+            <button type="button" className="pkey pkey-stamp pkey-sm" onClick={openCreate}>
               <Plus size={16} weight="bold" />
               Buat room
             </button>
@@ -281,7 +281,7 @@ export function RoomsPanel({
           title="Gagal memuat room"
           body={loadError}
           action={
-            <button type="button" className="btn btn-sm-outline" onClick={reload}>
+            <button type="button" className="pkey pkey-quiet pkey-sm" onClick={reload}>
               Coba lagi
             </button>
           }
@@ -291,14 +291,14 @@ export function RoomsPanel({
           title="Belum ada room"
           body="Room dibuat saat seorang host membuka sesi game untuk peserta. Buat satu manual untuk mencoba alurnya."
           action={
-            <button type="button" className="btn btn-sm-accent" onClick={openCreate}>
+            <button type="button" className="pkey pkey-stamp pkey-sm" onClick={openCreate}>
               Buat room
             </button>
           }
         />
       ) : (
         <div className="table-scroll">
-          <table className="admin-table">
+          <table className="ltable">
             <thead>
               <tr>
                 <th scope="col">Kode</th>
@@ -319,20 +319,20 @@ export function RoomsPanel({
                 );
                 return (
                   <tr key={room.id}>
-                    <td className="cell-mono">{room.room_code}</td>
-                    <td className="cell-muted">{room.profiles?.email ?? "Tanpa host"}</td>
-                    <td className="cell-muted">{game?.label ?? "Belum dipilih"}</td>
+                    <td className="code">{room.room_code}</td>
+                    <td className="muted">{room.profiles?.email ?? "Tanpa host"}</td>
+                    <td className="muted">{game?.label ?? "Belum dipilih"}</td>
                     <td>
                       <Pill tone={status?.tone ?? "neutral"}>
                         {status?.label ?? room.status}
                       </Pill>
                     </td>
-                    <td className="cell-muted">{formatDate(room.created_at)}</td>
+                    <td className="muted">{formatDate(room.created_at)}</td>
                     <td>
                       <div className="cell-actions">
                         <button
                           type="button"
-                          className="btn btn-sm-outline"
+                          className="pkey pkey-quiet pkey-sm"
                           onClick={() => openEdit(room)}
                           aria-label={`Ubah room ${room.room_code}`}
                           title="Ubah"
@@ -341,7 +341,7 @@ export function RoomsPanel({
                         </button>
                         <button
                           type="button"
-                          className="btn btn-sm-danger"
+                          className="pkey pkey-danger pkey-sm"
                           onClick={() => {
                             setDeleteError(null);
                             setDeleting(room);
@@ -368,13 +368,13 @@ export function RoomsPanel({
         sub="Kode room tidak bisa diubah setelah dibuat, karena peserta sudah menghafalnya."
         footer={
           <>
-            <button type="button" className="btn btn-sm-outline" onClick={closeForm}>
+            <button type="button" className="pkey pkey-quiet pkey-sm" onClick={closeForm}>
               Batal
             </button>
             <button
               type="submit"
               form="room-form"
-              className="btn btn-sm-accent"
+              className="pkey pkey-stamp pkey-sm"
               disabled={saving}
             >
               {saving ? <SpinnerGap size={16} weight="bold" /> : null}

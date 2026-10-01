@@ -1,8 +1,9 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
-import { ArrowClockwise, CursorClick } from "@phosphor-icons/react";
+import { ArrowClockwise } from "@phosphor-icons/react";
 import { sfx, unlockAudio } from "@/lib/sound";
 import { confettiBurst } from "@/lib/confetti";
+import Print from "./Print";
 
 type State = "idle" | "running" | "done";
 
@@ -26,7 +27,7 @@ export default function ClickGame() {
     const total = clicksRef.current;
     setState("done");
     setLeft(0);
-    setResult(`${total} klik dalam 10 detik (${(total / DURATION).toFixed(1)} klik/detik)`);
+    setResult(`${total} klik dalam ${DURATION} detik`);
     if (total >= 25) {
       sfx.ding();
       confettiBurst();
@@ -73,38 +74,43 @@ export default function ClickGame() {
   }
 
   return (
-    <article className="game-card click-card">
-      <div className="tool-head">
-        <h3 className="tool-title">
-          <CursorClick size={21} weight="bold" aria-hidden="true" /> Cepat-Tepat Klik
-        </h3>
-        <p className="tool-tag">Berapa klik kamu dalam 10 detik?</p>
-      </div>
+    <div className="tool">
+      <p className="print-caption">Ketuk jendela, mesin yang menghitung</p>
+
       <button
-        className={`click-target${state === "done" ? " done" : ""}`}
+        className="click-target click-bay"
         type="button"
         onClick={handleClick}
       >
-        {state === "running" ? "KLIK!" : "Klik aku secepat mungkin!"}
+        {state === "idle" ? "Ketuk untuk mulai" : state === "running" ? "Ketuk!" : "Selesai"}
       </button>
+
       <div className="click-stats">
-        <p className="click-count">
-          <strong>{clicks}</strong> klik
+        <p className="click-stat">
+          <span className="click-stat-value tnum">{clicks}</span>
+          <span className="click-stat-label">klik</span>
         </p>
-        <p className="click-remain">
-          sisa <strong>{left}</strong> detik
+        <p className="click-stat">
+          <span className="click-stat-value tnum">{left}</span>
+          <span className="click-stat-label">detik sisa</span>
         </p>
       </div>
-      {state === "done" && (
+
+      {state === "done" ? (
         <>
-          <p className="click-result" aria-live="polite">
+          <Print token={result} as="p" className="print-out">
             {result}
+          </Print>
+          <p className="quiz-feedback">
+            Rata-rata {(clicks / DURATION).toFixed(1)} klik per detik.
           </p>
-          <button className="btn btn-ghost btn-sm" type="button" onClick={restart}>
-            <ArrowClockwise size={16} /> Main lagi
-          </button>
+          <div className="keyrow">
+            <button className="pkey pkey-quiet" type="button" onClick={restart}>
+              <ArrowClockwise size={15} weight="bold" /> Main lagi
+            </button>
+          </div>
         </>
-      )}
-    </article>
+      ) : null}
+    </div>
   );
 }

@@ -300,14 +300,14 @@ export function IdeasPanel({
           <>
             <button
               type="button"
-              className="btn btn-sm-outline"
+              className="pkey pkey-quiet pkey-sm"
               onClick={reload}
               aria-label="Muat ulang katalog"
             >
               <ArrowClockwise size={16} weight="bold" />
               Muat ulang
             </button>
-            <button type="button" className="btn btn-sm-accent" onClick={openCreate}>
+            <button type="button" className="pkey pkey-stamp pkey-sm" onClick={openCreate}>
               <Plus size={16} weight="bold" />
               Tambah ide
             </button>
@@ -334,7 +334,7 @@ export function IdeasPanel({
           title="Gagal memuat katalog"
           body={loadError}
           action={
-            <button type="button" className="btn btn-sm-outline" onClick={reload}>
+            <button type="button" className="pkey pkey-quiet pkey-sm" onClick={reload}>
               Coba lagi
             </button>
           }
@@ -344,14 +344,14 @@ export function IdeasPanel({
           title="Katalog masih kosong"
           body="Belum ada ide game. Tambahkan yang pertama, atau jalankan supabase/seed.sql untuk mengisi 6 contoh dari katalog lama."
           action={
-            <button type="button" className="btn btn-sm-accent" onClick={openCreate}>
+            <button type="button" className="pkey pkey-stamp pkey-sm" onClick={openCreate}>
               Tambah ide
             </button>
           }
         />
       ) : (
         <div className="table-scroll">
-          <table className="admin-table">
+          <table className="ltable">
             <thead>
               <tr>
                 <th scope="col">Judul</th>
@@ -370,15 +370,15 @@ export function IdeasPanel({
               {items.map((idea) => (
                 <tr key={idea.id}>
                   <td>
-                    <div className="cell-strong">{idea.title}</div>
-                    <div className="cell-muted cell-mono">{idea.slug}</div>
+                    <div className="strong">{idea.title}</div>
+                    <div className="muted code">{idea.slug}</div>
                   </td>
-                  <td className="cell-muted">{labelFor(CATEGORY_OPTIONS, idea.category)}</td>
-                  <td className="cell-muted">
+                  <td className="muted">{labelFor(CATEGORY_OPTIONS, idea.category)}</td>
+                  <td className="muted">
                     {idea.media === "online" ? "Online" : "Offline"}
                   </td>
-                  <td className="cell-muted">{labelFor(DURATION_OPTIONS, idea.duration)}</td>
-                  <td className="cell-num">
+                  <td className="muted">{labelFor(DURATION_OPTIONS, idea.duration)}</td>
+                  <td className="num">
                     {idea.min_players}-{idea.max_players}
                   </td>
                   <td>
@@ -386,12 +386,12 @@ export function IdeasPanel({
                       {idea.is_published ? "Tayang" : "Draft"}
                     </Pill>
                   </td>
-                  <td className="cell-muted">{formatDate(idea.updated_at)}</td>
+                  <td className="muted">{formatDate(idea.updated_at)}</td>
                   <td>
                     <div className="cell-actions">
                       <button
                         type="button"
-                        className="btn btn-sm-outline"
+                        className="pkey pkey-quiet pkey-sm"
                         onClick={() => openEdit(idea)}
                         aria-label={`Ubah ${idea.title}`}
                         title="Ubah"
@@ -400,7 +400,7 @@ export function IdeasPanel({
                       </button>
                       <button
                         type="button"
-                        className="btn btn-sm-danger"
+                        className="pkey pkey-danger pkey-sm"
                         onClick={() => {
                           setDeleteError(null);
                           setDeleting(idea);
@@ -426,13 +426,13 @@ export function IdeasPanel({
         sub="Semua isian tersimpan ke tabel icebreaker_ideas."
         footer={
           <>
-            <button type="button" className="btn btn-sm-outline" onClick={closeForm}>
+            <button type="button" className="pkey pkey-quiet pkey-sm" onClick={closeForm}>
               Batal
             </button>
             <button
               type="submit"
               form="idea-form"
-              className="btn btn-sm-accent"
+              className="pkey pkey-stamp pkey-sm"
               disabled={saving}
             >
               {saving ? <SpinnerGap size={16} weight="bold" /> : null}
@@ -589,7 +589,7 @@ export function IdeasPanel({
               />
             </Field>
 
-            <div className="field-full">
+            <div className="full">
               <Checkbox
                 id="idea-published"
                 checked={form.is_published}

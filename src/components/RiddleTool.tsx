@@ -1,9 +1,10 @@
 "use client";
 import { useState } from "react";
-import { Eye, EyeSlash, ArrowClockwise, PuzzlePiece } from "@phosphor-icons/react";
+import { Eye, EyeSlash, ArrowClockwise } from "@phosphor-icons/react";
 import { RIDDLES } from "@/lib/data";
 import { sfx, unlockAudio } from "@/lib/sound";
 import { randIdx } from "@/lib/rand";
+import Stamp from "./Stamp";
 
 export default function RiddleTool() {
   const [idx, setIdx] = useState(0);
@@ -21,29 +22,24 @@ export default function RiddleTool() {
   }
 
   return (
-    <article className="tool-card riddle-card">
-      <div className="tool-head">
-        <h3 className="tool-title">
-          <PuzzlePiece size={21} weight="bold" aria-hidden="true" /> Tebak Frasa
-        </h3>
-        <p className="tool-tag">Tebak frasa dari tiga petunjuk singkat</p>
-      </div>
-      <ol className="riddle-clues" aria-live="polite">
+    <div className="tool">
+      <p className="print-caption">Petunjuk, dibuka berurutan</p>
+
+      <ol className="clues" aria-live="polite">
         {riddle.clues.map((clue, i) => (
-          <li key={clue}>
-            <span className="riddle-clue-num" aria-hidden="true">
-              {i + 1}
+          <li className="clue" key={clue}>
+            <span className="clue-num" aria-hidden="true">
+              {String(i + 1).padStart(2, "0")}
             </span>
-            {clue}
+            <span className="leader" aria-hidden="true" />
+            <span>{clue}</span>
           </li>
         ))}
       </ol>
-      <p className={`riddle-answer${show ? "" : " hidden"}`} id="rid-answer">
-        {riddle.answer}
-      </p>
-      <div className="riddle-actions">
+
+      <div className="keyrow">
         <button
-          className="btn btn-ghost btn-sm"
+          className="pkey pkey-quiet"
           type="button"
           aria-expanded={show}
           aria-controls="rid-answer"
@@ -54,13 +50,20 @@ export default function RiddleTool() {
             if (nextShow) sfx.ding();
           }}
         >
-          {show ? <EyeSlash size={17} /> : <Eye size={17} />}
-          {show ? "Sembunyikan" : "Buka jawaban"}
+          {show ? <EyeSlash size={15} weight="bold" /> : <Eye size={15} weight="bold" />}
+          {show ? "Tutup" : "Buka jawaban"}
         </button>
-        <button className="btn btn-primary btn-sm" type="button" onClick={next}>
-          <ArrowClockwise size={17} weight="bold" /> Ganti teka-teki
+        <button className="pkey pkey-stamp" type="button" onClick={next}>
+          <ArrowClockwise size={15} weight="bold" /> Teori lain
         </button>
       </div>
-    </article>
+
+      {show ? (
+        <div className="answer-flap" id="rid-answer">
+          <Stamp>Jawaban</Stamp>
+          <p className="answer-flap-value">{riddle.answer}</p>
+        </div>
+      ) : null}
+    </div>
   );
 }

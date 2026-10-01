@@ -91,7 +91,7 @@ export function AdminLogin() {
             />
           </Field>
 
-          <button type="submit" className="btn btn-sm-accent" disabled={busy}>
+          <button type="submit" className="pkey pkey-stamp pkey-sm" disabled={busy}>
             {busy ? <SpinnerGap size={16} weight="bold" /> : null}
             {busy ? "Memproses..." : isSignUp ? "Buat akun" : "Masuk"}
           </button>
